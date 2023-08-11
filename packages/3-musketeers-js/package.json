@@ -1,0 +1,22 @@
+{
+  "name": "@tiendada/3-musketeers",
+  "version": "0.0.0",
+  "description": "Minimal library for handling multiple browser analytics providers.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TiendaDA/3-musketeers.git"
+  },
+  "author": "Gi Wah Dávalos Loo <giwirodavalos@gmail.com>",
+  "contributors": [
+    "Gerson Carranza <g.carranzacord@gmail.com>"
+  ],
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/TiendaDA/3-musketeers/issues"
+  },
+  "homepage": "https://github.com/TiendaDA/3-musketeers#readme"
+}

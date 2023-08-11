@@ -13,6 +13,7 @@
 </p>
 
 <p align="center">
-  Welcome to the <b>3-musketeers</b> <b>JavaScript</b> repo.
+  Welcome to the <b>3-musketeers</b> <b>JavaScript</b> repo. <br/>
+  Minimal library for handling multiple browser analytics providers.
 </p>
 
