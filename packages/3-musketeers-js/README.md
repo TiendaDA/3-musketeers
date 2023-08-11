@@ -17,3 +17,16 @@
   Minimal library for handling multiple browser analytics providers.
 </p>
 
+```html
+<!-- 3-musketeers (3m.js) -->
+<script async src="https://<path_to_js>"></script>
+<scrip>
+    window.3mq = window.3mq || [];
+    function 3m() {3mq.push(arguments);}
+    3m(');
+</scrip>
+```
+
+## Resources
+
+- https://stacktonic.com/article/the-independent-event-driven-data-layer-a-practical-guide

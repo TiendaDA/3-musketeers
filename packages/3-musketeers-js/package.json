@@ -1,9 +1,11 @@
 {
   "name": "@tiendada/3-musketeers",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Minimal library for handling multiple browser analytics providers.",
   "main": "index.js",
   "scripts": {
+    "build":  "tsc --project ./tsconfig.json",
+    "lint": "eslint --ext .ts .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,5 +20,17 @@
   "bugs": {
     "url": "https://github.com/TiendaDA/3-musketeers/issues"
   },
-  "homepage": "https://github.com/TiendaDA/3-musketeers#readme"
+  "homepage": "https://github.com/TiendaDA/3-musketeers#readme",
+  "dependencies": {
+    "data-layer-helper": "^0.1.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.3.0",
+    "@typescript-eslint/parser": "^6.3.0",
+    "eslint": "^8.46.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.1",
+    "typescript": "^5.1.6"
+  }
 }
