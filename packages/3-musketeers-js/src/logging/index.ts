@@ -4,7 +4,7 @@ export enum LogLevel {
   ERROR = 3,
 }
 
-type LogMessage = string | number | undefined | object;
+export type LogMessage = string | number | undefined | object;
 
 let debugMode = false;
 
@@ -35,6 +35,7 @@ function log_(logLevel: LogLevel, ...message: LogMessage[]) {
         console.error(...prelude, ...message);
         break;
       default:
+        break;
     }
   }
 }

@@ -1,10 +1,29 @@
 const {build} = require('esbuild');
 
-build({
-  entryPoints: ['./src/index.js'],
+const commonOptions = {
   outbase: './src',
-  outdir: './dist',
   platform: 'browser',
   bundle: true,
-  // minify: true,
-}).then((r) => console.log('Finish build'));
+  minify: true,
+};
+
+const files = [
+  {
+    name: 'Standalone',
+    entryPoint: './src/browser-standalone.js',
+    outfile: './dist/standalone.js',
+  },
+  {
+    name: 'All providers',
+    entryPoint: './src/browser-all.js',
+    outfile: './dist/all.js',
+  },
+];
+
+files.forEach((f) =>
+  build({
+    entryPoints: [f.entryPoint],
+    outfile: f.outfile,
+    ...commonOptions,
+  }).then((r) => console.log(`Finish build: ${f.name}`))
+);
