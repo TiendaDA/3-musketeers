@@ -80,8 +80,8 @@ t3m('track', 'On-Boarding Started', {
 
 ## 🎯 Included Providers
 
-#### Google Analytics 4 [definition](https://github.com/TiendaDA/3-musketeers/blob/main/packages/3-musketeers-js/src/3-musketeers/provider/google-analytics/index.ts)
-#### Amplitude [definition](https://github.com/TiendaDA/3-musketeers/blob/main/packages/3-musketeers-js/src/3-musketeers/provider/amplitude/index.ts)
+- **Google Analytics 4** [[definition]](https://github.com/TiendaDA/3-musketeers/blob/main/packages/3-musketeers-js/src/3-musketeers/provider/google-analytics/index.ts)
+- **Amplitude** [[definition]](https://github.com/TiendaDA/3-musketeers/blob/main/packages/3-musketeers-js/src/3-musketeers/provider/amplitude/index.ts)
 
 ## Resources
 
