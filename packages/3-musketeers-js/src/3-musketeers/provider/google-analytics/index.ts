@@ -6,10 +6,8 @@ export class GoogleAnalytics extends Provider {
   mapTrackEventName: ProviderInitOptions['mapTrackEventName'];
 
   init(tagId: string, options: ProviderInitOptions = {}): void {
-    Provider.logAction('INIT', `${GoogleAnalytics.providerName} (${tagId})`);
-    if (options.mapTrackEventName) {
-      this.mapTrackEventName = options.mapTrackEventName;
-    }
+    Provider.logAction('INIT', `[${GoogleAnalytics.providerName}]`, tagId);
+    this.saveOptions(options);
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () {
       // eslint-disable-next-line prefer-rest-params
@@ -25,7 +23,12 @@ export class GoogleAnalytics extends Provider {
   }
 
   pageView(name: string, params?: Record<string, string>): void {
-    Provider.logAction('PAGE', name, params);
+    Provider.logAction(
+      'PAGE',
+      `[${GoogleAnalytics.providerName}]`,
+      name,
+      params
+    );
     window.gtag('event', 'page_view', {page_title: name, ...params});
   }
 
@@ -34,11 +37,25 @@ export class GoogleAnalytics extends Provider {
     params?: Record<string, unknown>,
     callback?: () => void
   ): void {
-    const name = this.mapTrackEventName
-      ? this.mapTrackEventName(eventName)
-      : eventName;
-    Provider.logAction('TRACK', name, params);
+    const name = this.getTrackEventName(eventName);
+    Provider.logAction(
+      'TRACK',
+      `[${GoogleAnalytics.providerName}]`,
+      name,
+      params
+    );
     window.gtag('event', name, params);
     if (typeof callback === 'function') callback();
+  }
+
+  identify(userId: string, params?: Record<string, unknown>): void {
+    Provider.logAction(
+      'IDENTIFY',
+      `[${GoogleAnalytics.providerName}]`,
+      userId,
+      params
+    );
+    window.gtag('set', 'user_id', userId);
+    window.gtag('set', 'user_properties', params);
   }
 }

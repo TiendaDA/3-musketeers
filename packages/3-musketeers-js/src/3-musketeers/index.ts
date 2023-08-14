@@ -1,6 +1,6 @@
 import {Provider, ProviderClass, ProviderImpl} from './provider';
 import {DataLayerHelper, DataLayerListener} from '../data-layer-helper';
-import {handlePageView, handleTrack} from './command';
+import {handleIdentify, handlePageView, handleTrack} from './command';
 import {log} from '../logging';
 
 export class Tiendada3musketeers {
@@ -52,6 +52,9 @@ export class Tiendada3musketeers {
         break;
       case 'page':
         handlePageView(this.providers, args);
+        break;
+      case 'identify':
+        handleIdentify(this.providers, args);
         break;
     }
   };

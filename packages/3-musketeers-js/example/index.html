@@ -6,20 +6,29 @@
         content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0'>
   <meta http-equiv='X-UA-Compatible' content='ie=edge'>
   <title>3-musketeers-js example</title>
-  <script async src="../dist/index.js"></script>
+  <script async src="../dist/all.js"></script>
   <script>
     window.dataQueue = window.dataQueue || [];
     function t3m() {dataQueue.push(arguments);}
+
     t3m('init', 'google-analytics', 'G-1234567', {
       mapTrackEventName: (name) => name.replaceAll(' ', '_').toLowerCase(),
     });
+
+    t3m('init', 'amplitude', '123-amplitude-api-key');
+
     t3m('track', 'On Boarding Started', {
       'action': 'Started',
       'event_label': 'On Boarding'
     });
+
     t3m('page', 'Home');
-    /*t3m('init', 'google-tag-manager', 'G-1234567');
-    t3m('init', 'amplitude', 'G-1234567');*/
+
+    t3m('identify', 'user-id-123', {
+      'firstName': 'Hal',
+      'lastName': '9000',
+      'email': 'space@odyssey.com'
+    });
   </script>
 </head>
 <body>

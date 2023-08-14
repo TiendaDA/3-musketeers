@@ -33,3 +33,14 @@ export function handleTrack(providers: Provider[], args: unknown[]) {
     p.track(eventName, params, callback);
   });
 }
+
+export function handleIdentify(providers: Provider[], args: unknown[]) {
+  providers.forEach((p) => {
+    const [userId, params] = args as [
+      string,
+      Record<string, unknown>,
+      () => void,
+    ];
+    p.identify(userId, params);
+  });
+}
