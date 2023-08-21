@@ -1,0 +1,78 @@
+plugins {
+    // Apply the java-library plugin to add support for Java Library
+    id 'java-library'
+    id 'checkstyle'
+    id 'com.diffplug.spotless' version '6.20.0'
+    id 'maven-publish'
+}
+
+
+group = 'com.tiendada'
+version = '1.0.0-SNAPSHOT'
+sourceCompatibility = '17'
+
+checkstyle {
+    toolVersion '10.3.2'
+}
+
+spotless {
+    java {
+        target 'src/*/java/**/*.java', 'test/java/**/*.java'
+
+        googleJavaFormat('1.15.0')
+        removeUnusedImports()
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // This dependency is exported to consumers, that is to say found on their compile classpath.
+    api 'org.apache.commons:commons-math3:3.6.1'
+
+    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
+    implementation 'com.google.guava:guava:30.0-jre'
+
+    // Use JUnit test framework
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+    // Log
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'org.slf4j:slf4j-simple:1.7.25'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    testCompileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    // Http
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+    implementation 'org.apache.httpcomponents:httpasyncclient:4.1.5'
+    implementation 'io.projectreactor:reactor-core:3.4.22'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'com.tiendada'
+            artifactId = 'musketeers'
+            version = version
+            from components.java
+        }
+    }
+}
