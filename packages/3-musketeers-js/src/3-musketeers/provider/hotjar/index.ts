@@ -17,7 +17,7 @@ export class Hotjar extends Provider {
     HotjarSdk.init(siteId, hotjarVersion);
   }
   ready(): boolean {
-    throw new Error('Method not implemented.');
+    return !!HotjarSdk;
   }
   pageView(name: string, params?: Record<string, string>): void {
     Provider.logAction('PAGE', `[${Hotjar.providerName}]`, name, params);
