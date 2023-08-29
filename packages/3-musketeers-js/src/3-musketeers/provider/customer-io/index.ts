@@ -90,6 +90,13 @@ export class CustomerIo extends Provider {
     if (typeof callback === 'function') callback();
   }
   identify(userId: string, params?: Record<string, unknown> | undefined): void {
+    Provider.logAction(
+      'IDENTIFY',
+      `[${CustomerIo.providerName}]`,
+      userId,
+      params
+    );
+
     window._cio.identify({
       id: userId,
       created_at: Date.now(),
