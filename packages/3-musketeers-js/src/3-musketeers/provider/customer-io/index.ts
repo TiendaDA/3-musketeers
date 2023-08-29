@@ -1,3 +1,4 @@
+import {loadScript} from '../../../utils';
 import {Provider, ProviderInitOptions} from '../provider';
 
 type CustomerIoOptions = {
@@ -33,40 +34,43 @@ export class CustomerIo extends Provider {
       enableInMemoryStorage,
     } = customerIoOptions;
 
-    const _cio = _cio || [];
-    (function () {
-      const a, b, c;
-      a = function (f) {
-        return function () {
-          _cio.push([f].concat(Array.prototype.slice.call(arguments, 0)));
-        };
+    const _cio = window._cio || [];
+
+    const a = function (f) {
+      return function () {
+        // eslint-disable-next-line prefer-rest-params
+        _cio.push([f].concat(Array.prototype.slice.call(arguments, 0)));
       };
-      b = ['load', 'identify', 'sidentify', 'track', 'page', 'on', 'off'];
-      for (c = 0; c < b.length; c++) {
-        _cio[b[c]] = a(b[c]);
-      }
-      const t = document.createElement('script'),
-        s = document.getElementsByTagName('script')[0];
-      t.async = true;
-      t.id = 'cio-tracker';
-      t.setAttribute('data-site-id', siteId);
+    };
+    const methods = [
+      'load',
+      'identify',
+      'sidentify',
+      'track',
+      'page',
+      'on',
+      'off',
+    ];
 
-      t.setAttribute('data-use-array-params', `${!!useArrayParams}`);
-      t.setAttribute('data-auto-track-page', `${!!autoTrackPage}`);
-      t.setAttribute('data-use-in-app', `${!!useInApp}`);
-      t.setAttribute('data-cross-site-support', `${!!crossSiteSupport}`);
-      t.setAttribute(
-        'data-enable-in-memory-storage',
-        `${!!enableInMemoryStorage}`
-      );
+    for (const method of methods) {
+      _cio[method] = a(method);
+    }
 
-      let src = 'https://assets.customer.io/assets/track.js';
-      if (location === 'EU')
-        src = 'https://assets.customer.io/assets/track-eu.js';
+    let src = 'https://assets.customer.io/assets/track.js';
+    if (location === 'EU')
+      src = 'https://assets.customer.io/assets/track-eu.js';
 
-      t.src = src;
-      s.parentNode.insertBefore(t, s);
-    })();
+    const attributes: Record<string, string> = {
+      id: 'cio-tracker',
+      'data-site-id': siteId,
+      'data-use-array-params': `${!!useArrayParams}`,
+      'data-auto-track-page': `${!!autoTrackPage}`,
+      'data-use-in-app': `${!!useInApp}`,
+      'data-cross-site-support': `${!!crossSiteSupport}`,
+      'data-enable-in-memory-storage': `${!!enableInMemoryStorage}`,
+    };
+
+    loadScript(src, {async: true, attributes});
   }
   ready(): boolean {
     return !!window._cio;
@@ -77,8 +81,8 @@ export class CustomerIo extends Provider {
   }
   track(
     eventName: string,
-    params?: Record<string, any> | undefined,
-    callback?: (() => void) | undefined
+    params?: Record<string, unknown>,
+    callback?: () => void
   ): void {
     const name = this.getTrackEventName(eventName);
     Provider.logAction('TRACK', `[${CustomerIo.providerName}]`, name, params);
