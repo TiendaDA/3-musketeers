@@ -119,3 +119,21 @@ export function loadScript(src: string, options: LoadScriptOptions = {}) {
   script.setAttribute('src', src);
   document.body.appendChild(script);
 }
+
+export function loadScriptRaw(script: string, options: LoadScriptOptions = {}) {
+  const {async, attributes, defer} = options;
+  const scriptElement = document.createElement('script');
+
+  if (async) scriptElement.async = true;
+  if (defer) scriptElement.defer = true;
+
+  if (attributes) {
+    Object.keys(attributes).forEach((key) => {
+      scriptElement.setAttribute(key, attributes[key]);
+    });
+  }
+
+  scriptElement.appendChild(document.createTextNode(script));
+
+  document.body.appendChild(scriptElement);
+}
