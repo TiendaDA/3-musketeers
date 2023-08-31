@@ -3,6 +3,16 @@ interface Window {
   dataLayer: unknown[];
   gtag: (...args: unknown[]) => void;
   t3musketeers: unknown;
+  amplitude: {
+    getInstance: (name?: string) => {
+      init: (...args: unknown[]) => void;
+      logEvent: (...args: unknown[]) => void;
+      identify: (...args: unknown[]) => void;
+    };
+    Identify: (...args: unknown[]) => void;
+    setUserId: (...args: unknown[]) => void;
+  };
+
   _fbq: unknown;
   fbq: {
     callMethod: (...args: unknown[]) => void;
