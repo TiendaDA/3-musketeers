@@ -98,10 +98,42 @@ export function expandKeyValue(key: string, value: any) {
   return result;
 }
 
-export function loadScript(src: string, options: {async?: boolean} = {}) {
-  const {async} = options;
+type LoadScriptOptions = {
+  async?: boolean;
+  defer?: boolean;
+  attributes?: Record<string, string>;
+};
+
+export function loadScript(src: string, options: LoadScriptOptions = {}) {
+  const {async, defer, attributes} = options;
   const script = document.createElement('script');
   script.async = !!async;
+  script.defer = !!defer;
+
+  if (attributes) {
+    Object.keys(attributes).forEach((key) => {
+      script.setAttribute(key, attributes[key]);
+    });
+  }
+
   script.setAttribute('src', src);
   document.body.appendChild(script);
+}
+
+export function loadScriptRaw(script: string, options: LoadScriptOptions = {}) {
+  const {async, attributes, defer} = options;
+  const scriptElement = document.createElement('script');
+
+  if (async) scriptElement.async = true;
+  if (defer) scriptElement.defer = true;
+
+  if (attributes) {
+    Object.keys(attributes).forEach((key) => {
+      scriptElement.setAttribute(key, attributes[key]);
+    });
+  }
+
+  scriptElement.appendChild(document.createTextNode(script));
+
+  document.body.appendChild(scriptElement);
 }

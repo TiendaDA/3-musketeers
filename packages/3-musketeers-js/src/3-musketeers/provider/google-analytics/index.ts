@@ -14,7 +14,7 @@ export class GoogleAnalytics extends Provider {
       window.dataLayer.push(arguments);
     };
     window.gtag('js', new Date());
-    window.gtag('config', 'G-JJYRJMRN07');
+    window.gtag('config', tagId);
     loadScript(`https://www.googletagmanager.com/gtag/js?id=${tagId}`);
   }
 
