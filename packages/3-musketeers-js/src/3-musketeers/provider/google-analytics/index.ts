@@ -1,12 +1,12 @@
 import {Provider, ProviderInitOptions} from '../provider';
 import {loadScript} from '../../../utils';
 
-export class GoogleAnalytics extends Provider {
-  static providerName: string = 'google-analytics';
+export class GoogleTagManager extends Provider {
+  static providerName: string = 'google-tag-manager';
   mapTrackEventName: ProviderInitOptions['mapTrackEventName'];
 
   init(tagId: string, options: ProviderInitOptions = {}): void {
-    Provider.logAction('INIT', `[${GoogleAnalytics.providerName}]`, tagId);
+    Provider.logAction('INIT', `[${GoogleTagManager.providerName}]`, tagId);
     this.saveOptions(options);
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () {
@@ -25,7 +25,7 @@ export class GoogleAnalytics extends Provider {
   pageView(name: string, params?: Record<string, string>): void {
     Provider.logAction(
       'PAGE',
-      `[${GoogleAnalytics.providerName}]`,
+      `[${GoogleTagManager.providerName}]`,
       name,
       params
     );
@@ -40,7 +40,7 @@ export class GoogleAnalytics extends Provider {
     const name = this.getTrackEventName(eventName);
     Provider.logAction(
       'TRACK',
-      `[${GoogleAnalytics.providerName}]`,
+      `[${GoogleTagManager.providerName}]`,
       name,
       params
     );
@@ -51,7 +51,7 @@ export class GoogleAnalytics extends Provider {
   identify(userId: string, params?: Record<string, unknown>): void {
     Provider.logAction(
       'IDENTIFY',
-      `[${GoogleAnalytics.providerName}]`,
+      `[${GoogleTagManager.providerName}]`,
       userId,
       params
     );
