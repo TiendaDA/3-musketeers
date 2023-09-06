@@ -21,7 +21,6 @@ export class FacebookPixel extends Provider {
 
   init(
     pixelId: string,
-    version: string,
     options: ProviderInitOptions = {},
     advancedMatching?: AdvancedMatching
   ): void {
@@ -39,7 +38,7 @@ export class FacebookPixel extends Provider {
 
     window.fbq.push = window.fbq;
     window.fbq.loaded = !0;
-    window.fbq.version = version;
+    window.fbq.version = '2.0';
     window.fbq.queue = [];
 
     loadScript(`https://connect.facebook.net/en_US/fbevents.js`);
