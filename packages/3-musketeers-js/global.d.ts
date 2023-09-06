@@ -21,8 +21,9 @@ interface Window {
     version: string;
     queue: unknown[];
   };
-  _cio: {
-    push: (...args: unknown[]) => void;
+  analytics: {
+    // push: (...args: unknown[]) => void;
+    load: (...args: unknown[]) => void;
     page: (...args: unknown[]) => void;
     track: (...args: unknown[]) => void;
     identify: (...args: unknown[]) => void;
