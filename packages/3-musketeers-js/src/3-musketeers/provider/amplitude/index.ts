@@ -34,7 +34,7 @@ export class Amplitude extends Provider {
     params?: Record<string, unknown>,
     callback?: () => void
   ): void {
-    const {name: mappedName, params: mappedParams} = this.getTrackEvent(
+    const {eventName: mappedName, params: mappedParams} = this.getTrackEvent(
       eventName,
       params
     );

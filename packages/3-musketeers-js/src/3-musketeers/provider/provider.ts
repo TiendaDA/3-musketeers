@@ -2,7 +2,7 @@
 import {log, LogMessage} from '../../logging';
 
 type MapTrackEventResult = {
-  name: string;
+  eventName: string;
   params: Record<string, unknown>;
 };
 
@@ -52,7 +52,7 @@ export abstract class Provider {
     }
 
     return {
-      name: eventName,
+      eventName,
       params,
     };
   }
