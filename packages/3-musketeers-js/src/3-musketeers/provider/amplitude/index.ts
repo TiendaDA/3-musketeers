@@ -4,7 +4,7 @@ import {loadScriptRaw} from '../../../utils';
 
 export class Amplitude extends Provider {
   static providerName: string = 'amplitude';
-  mapTrackEventName: ProviderInitOptions['mapTrackEventName'];
+  mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
 
   init(
     apiKey: string,
@@ -34,9 +34,17 @@ export class Amplitude extends Provider {
     params?: Record<string, unknown>,
     callback?: () => void
   ): void {
-    const name = this.getTrackEventName(eventName);
-    Provider.logAction('TRACK', `[${Amplitude.providerName}]`, name, params);
-    window.amplitude.track(name, params);
+    const {name: mappedName, params: mappedParams} = this.getTrackEvent(
+      eventName,
+      params
+    );
+    Provider.logAction(
+      'TRACK',
+      `[${Amplitude.providerName}]`,
+      mappedName,
+      mappedParams
+    );
+    window.amplitude.track(mappedName, mappedParams);
     if (typeof callback === 'function') callback();
   }
 

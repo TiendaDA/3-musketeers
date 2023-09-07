@@ -6,7 +6,7 @@ const customerIoScript =
 
 export class CustomerIo extends Provider {
   static providerName: string = 'customer-io';
-  mapTrackEventName: ProviderInitOptions['mapTrackEventName'];
+  mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
 
   init(customerIoKey: string, options: ProviderInitOptions = {}): void {
     Provider.logAction('INIT', `[${CustomerIo.providerName}]`, customerIoKey);
@@ -29,9 +29,17 @@ export class CustomerIo extends Provider {
     params?: Record<string, unknown>,
     callback?: () => void
   ): void {
-    const name = this.getTrackEventName(eventName);
-    Provider.logAction('TRACK', `[${CustomerIo.providerName}]`, name, params);
-    window.analytics.track(name, params);
+    const {name: mappedName, params: mappedParams} = this.getTrackEvent(
+      eventName,
+      params
+    );
+    Provider.logAction(
+      'TRACK',
+      `[${CustomerIo.providerName}]`,
+      mappedName,
+      mappedParams
+    );
+    window.analytics.track(mappedName, mappedParams);
     if (typeof callback === 'function') callback();
   }
   identify(userId: string, params?: Record<string, unknown> | undefined): void {

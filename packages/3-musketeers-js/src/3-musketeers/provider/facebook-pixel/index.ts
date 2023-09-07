@@ -17,7 +17,7 @@ type AdvancedMatching = {
 
 export class FacebookPixel extends Provider {
   static providerName: string = 'facebook-pixel';
-  mapTrackEventName: ProviderInitOptions['mapTrackEventName'];
+  mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
 
   init(
     pixelId: string,
@@ -58,15 +58,18 @@ export class FacebookPixel extends Provider {
     params?: Record<string, unknown>,
     callback?: () => void
   ): void {
-    const name = this.getTrackEventName(eventName);
+    const {name: mappedName, params: mappedParams} = this.getTrackEvent(
+      eventName,
+      params
+    );
     Provider.logAction(
       'TRACK',
       `[${FacebookPixel.providerName}]`,
-      name,
-      params
+      mappedName,
+      mappedParams
     );
 
-    window.fbq('track', name, params);
+    window.fbq('track', mappedName, mappedParams);
     if (typeof callback === 'function') callback();
   }
   identify(userId: string, params?: Record<string, unknown>): void {

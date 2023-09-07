@@ -4,7 +4,7 @@ import {Provider, ProviderInitOptions} from '../provider';
 
 export class Hotjar extends Provider {
   static providerName: string = 'hotjar';
-  mapTrackEventName: ProviderInitOptions['mapTrackEventName'];
+  mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
 
   init(
     siteId: number,
@@ -29,10 +29,18 @@ export class Hotjar extends Provider {
     params?: Record<string, unknown>,
     callback?: () => void
   ): void {
-    const name = this.getTrackEventName(eventName);
-    Provider.logAction('TRACK', `[${Hotjar.providerName}]`, name, params);
+    const {name: mappedName, params: mappedParams} = this.getTrackEvent(
+      eventName,
+      params
+    );
+    Provider.logAction(
+      'TRACK',
+      `[${Hotjar.providerName}]`,
+      mappedName,
+      mappedParams
+    );
 
-    HotjarSdk.event(name);
+    HotjarSdk.event(mappedName);
     if (typeof callback === 'function') callback();
   }
   identify(
