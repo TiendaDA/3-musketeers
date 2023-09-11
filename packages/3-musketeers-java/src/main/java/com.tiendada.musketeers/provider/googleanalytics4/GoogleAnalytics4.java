@@ -45,8 +45,16 @@ public class GoogleAnalytics4 implements Provider {
     }
 
     var event = Map.of("name", eventName, "params", attributes);
-    // TODO: handle timestamp_micros
-    var body = Map.of("clientId", identifier, "userId", userId, "events", List.of(event));
+    var body =
+        Map.of(
+            "client_id",
+            identifier,
+            "user_id",
+            userId,
+            "timestamp_micros",
+            timestamp.toInstant().toEpochMilli() * 1000,
+            "events",
+            List.of(event));
 
     try {
       var response =
