@@ -55,6 +55,22 @@ public class HttpTest {
   }
 
   @Test
+  void syncPutJsonRequest() throws IOException, URISyntaxException, HttpConfigException {
+    var resp =
+        Http.put(
+            HttpOptions.<EchoResponse, String>builder()
+                .url("https://postman-echo.com/put")
+                .queryParams(Map.of("foo", "bar"))
+                .body(new JsonBody(Map.of("fizz", "buzz")))
+                .responseCls(EchoResponse.class)
+                .errorCls(String.class)
+                .build());
+
+    assertEquals(resp.getBody().getArgs().get("foo"), "bar");
+    assertEquals(resp.getBody().getData().get("fizz"), "buzz");
+  }
+
+  @Test
   void asyncGetRequest() throws URISyntaxException, UnsupportedEncodingException {
     Http.getAsync(
             HttpOptions.<EchoResponse, String>builder()
