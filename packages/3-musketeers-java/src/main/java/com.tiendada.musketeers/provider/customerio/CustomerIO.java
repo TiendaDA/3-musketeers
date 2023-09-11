@@ -24,7 +24,7 @@ public class CustomerIO implements Provider {
   private String apiKey;
 
   @Override
-  public void identify(String identifier, Map<String, Object> attributes) {
+  public void identify(String identifier, String userId, Map<String, Object> attributes) {
     URL url;
 
     try {
@@ -48,21 +48,27 @@ public class CustomerIO implements Provider {
 
     try {
       var response =
-          Http.post(
+          Http.put(
               HttpOptions.builder()
                   .url(url.toString())
                   .headers(this.buildCredentialHeaders())
                   .body(new JsonBody(body))
                   .build());
-      log.info("Identify [identifier=%s][statusCode=%s]".formatted(identifier, response.getStatus()));
+      log.info(
+          "Identify [identifier=%s][statusCode=%s]".formatted(identifier, response.getStatus()));
     } catch (HttpConfigException | IOException | URISyntaxException e) {
-      log.error("Could not Identify [identifier=%s][error=%s]".formatted(identifier, e.getMessage()));
+      log.error(
+          "Could not Identify [identifier=%s][error=%s]".formatted(identifier, e.getMessage()));
     }
   }
 
   @Override
   public void track(
-      String identifier, String eventName, OffsetDateTime timestamp, Map<String, Object> attributes) {
+      String identifier,
+      String userId,
+      String eventName,
+      OffsetDateTime timestamp,
+      Map<String, Object> attributes) {
     URL url;
 
     try {
@@ -84,13 +90,13 @@ public class CustomerIO implements Provider {
             "name",
             eventName,
             "timestamp",
-            timestamp.toString(),
+            timestamp.toInstant().toEpochMilli(),
             "attributes",
             attributes);
 
     try {
       var response =
-          Http.put(
+          Http.post(
               HttpOptions.builder()
                   .url(url.toString())
                   .headers(this.buildCredentialHeaders())
