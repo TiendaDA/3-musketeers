@@ -48,7 +48,7 @@ public class CustomerIO implements Provider {
 
     try {
       var response =
-          Http.post(
+          Http.put(
               HttpOptions.builder()
                   .url(url.toString())
                   .headers(this.buildCredentialHeaders())
@@ -90,13 +90,13 @@ public class CustomerIO implements Provider {
             "name",
             eventName,
             "timestamp",
-            timestamp.toString(),
+            timestamp.toInstant().toEpochMilli(),
             "attributes",
             attributes);
 
     try {
       var response =
-          Http.put(
+          Http.post(
               HttpOptions.builder()
                   .url(url.toString())
                   .headers(this.buildCredentialHeaders())
