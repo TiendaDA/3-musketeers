@@ -3,7 +3,7 @@ import {loadScript} from '../../../utils';
 
 export class GoogleTagManager extends Provider {
   static providerName: string = 'google-tag-manager';
-  mapTrackEventName: ProviderInitOptions['mapTrackEventName'];
+  mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
 
   init(tagId: string, options: ProviderInitOptions = {}): void {
     Provider.logAction('INIT', `[${GoogleTagManager.providerName}]`, tagId);
@@ -37,14 +37,17 @@ export class GoogleTagManager extends Provider {
     params?: Record<string, unknown>,
     callback?: () => void
   ): void {
-    const name = this.getTrackEventName(eventName);
+    const {eventName: mappedName, params: mappedParams} = this.getTrackEvent(
+      eventName,
+      params
+    );
     Provider.logAction(
       'TRACK',
       `[${GoogleTagManager.providerName}]`,
-      name,
-      params
+      mappedName,
+      mappedParams
     );
-    window.gtag('event', name, params);
+    window.gtag('event', mappedName, mappedParams);
     if (typeof callback === 'function') callback();
   }
 

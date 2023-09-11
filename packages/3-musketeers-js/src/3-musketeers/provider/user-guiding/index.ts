@@ -3,7 +3,7 @@ import {Provider, ProviderInitOptions} from '../provider';
 
 export class UserGuiding extends Provider {
   static providerName: string = 'user-guiding';
-  mapTrackEventName: ProviderInitOptions['mapTrackEventName'];
+  mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
 
   init(containerId: string, options: ProviderInitOptions = {}): void {
     Provider.logAction('INIT', `[${UserGuiding.providerName}]`, containerId);
@@ -48,10 +48,18 @@ export class UserGuiding extends Provider {
     params: Record<string, unknown>,
     callback?: () => void
   ): void {
-    const name = this.getTrackEventName(eventName);
-    Provider.logAction('TRACK', `[${UserGuiding.providerName}]`, name, params);
+    const {eventName: mappedName, params: mappedParams} = this.getTrackEvent(
+      eventName,
+      params
+    );
+    Provider.logAction(
+      'TRACK',
+      `[${UserGuiding.providerName}]`,
+      mappedName,
+      mappedParams
+    );
 
-    window.userGuiding.track(name, params);
+    window.userGuiding.track(mappedName, mappedParams);
     if (typeof callback === 'function') callback();
   }
   identify(userId: string, params?: Record<string, unknown>): void {

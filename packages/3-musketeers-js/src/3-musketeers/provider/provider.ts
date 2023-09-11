@@ -1,23 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {log, LogMessage} from '../../logging';
 
+type MapTrackEventResult = {
+  eventName: string;
+  params: Record<string, unknown>;
+};
+
 export type ProviderInitOptions = {
-  mapTrackEventName?: (name: string) => string;
+  mapTrackEvent?: (
+    eventName: string,
+    params: Record<string, unknown>
+  ) => MapTrackEventResult;
 };
 
 export type ProviderActions = 'INIT' | 'PAGE' | 'TRACK' | 'IDENTIFY';
 
 export abstract class Provider {
   static providerName: string = 'provider';
-  mapTrackEventName: ProviderInitOptions['mapTrackEventName'];
+  mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
 
   static logAction(action: ProviderActions, ...message: LogMessage[]) {
     log.info(`[${action}]`, ...message);
   }
 
   saveOptions(options: ProviderInitOptions = {}) {
-    if (options.mapTrackEventName) {
-      this.mapTrackEventName = options.mapTrackEventName;
+    if (options.mapTrackEvent) {
+      this.mapTrackEvent = options.mapTrackEvent;
     }
   }
 
@@ -35,12 +43,18 @@ export abstract class Provider {
 
   abstract identify(userId: string, params?: Record<string, unknown>): void;
 
-  getTrackEventName(eventName: string): string {
-    if (this.mapTrackEventName) {
-      return this.mapTrackEventName(eventName);
+  getTrackEvent(
+    eventName: string,
+    params: Record<string, unknown>
+  ): MapTrackEventResult {
+    if (this.mapTrackEvent) {
+      return this.mapTrackEvent(eventName, params);
     }
 
-    return eventName;
+    return {
+      eventName,
+      params,
+    };
   }
 }
 

@@ -1,5 +1,5 @@
 import {Tiendada3musketeers} from './3-musketeers';
-import {GoogleTagManager} from './3-musketeers/provider/google-analytics';
+import {GoogleTagManager} from './3-musketeers/provider/google-tag-manager';
 import {Amplitude} from './3-musketeers/provider/amplitude';
 import {CustomerIo} from './3-musketeers/provider/customer-io';
 import {FacebookPixel} from './3-musketeers/provider/facebook-pixel';
