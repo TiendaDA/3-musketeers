@@ -43,7 +43,9 @@ export class UserGuiding extends Provider {
       userId,
       params
     );
-
-    window.userGuiding && window.userGuiding.identify(userId, params);
+    console.log({
+      tool: window.userGuiding,
+    });
+    if (window.userGuiding) window.userGuiding.identify(userId, params);
   }
 }
