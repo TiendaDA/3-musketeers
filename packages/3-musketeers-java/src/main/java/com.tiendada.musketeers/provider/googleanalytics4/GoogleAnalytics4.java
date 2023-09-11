@@ -25,13 +25,14 @@ public class GoogleAnalytics4 implements Provider {
   private final String measurementId;
 
   @Override
-  public void identify(String userId, Map<String, Object> attributes) {
+  public void identify(String identifier, String userId, Map<String, Object> attributes) {
     throw new UnsupportedOperationException();
   }
 
   @Override
   public void track(
       String identifier,
+      String userId,
       String eventName,
       OffsetDateTime timestamp,
       Map<String, Object> attributes) {
@@ -45,7 +46,7 @@ public class GoogleAnalytics4 implements Provider {
 
     var event = Map.of("name", eventName, "params", attributes);
     // TODO: handle timestamp_micros
-    var body = Map.of("clientId", identifier, "events", List.of(event));
+    var body = Map.of("clientId", identifier, "userId", userId, "events", List.of(event));
 
     try {
       var response =
