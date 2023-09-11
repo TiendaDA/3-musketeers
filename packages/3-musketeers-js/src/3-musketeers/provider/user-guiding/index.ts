@@ -43,7 +43,7 @@ export class UserGuiding extends Provider {
       userId,
       params
     );
-    if (!this.ready()) return;
-    window.userGuiding?.identify(userId, params);
+
+    window.userGuiding && window.userGuiding.identify(userId, params);
   }
 }
