@@ -1,15 +1,10 @@
 package com.tiendada.musketeers.provider;
 
-import java.time.OffsetDateTime;
-import java.util.Map;
+import com.tiendada.musketeers.provider.request.IdentifyRequest;
+import com.tiendada.musketeers.provider.request.TrackRequest;
 
 public interface Provider {
-  void identify(String identifier, String userId, Map<String, Object> attributes);
+  void identify(IdentifyRequest request);
 
-  void track(
-      String identifier,
-      String userId,
-      String eventName,
-      OffsetDateTime timestamp,
-      Map<String, Object> attributes);
+  void track(TrackRequest request);
 }
