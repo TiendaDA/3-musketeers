@@ -5,11 +5,12 @@ import com.tiendada.musketeers.http.HttpOptions;
 import com.tiendada.musketeers.http.body.JsonBody;
 import com.tiendada.musketeers.http.exc.HttpConfigException;
 import com.tiendada.musketeers.provider.Provider;
+import com.tiendada.musketeers.provider.request.IdentifyRequest;
+import com.tiendada.musketeers.provider.request.TrackRequest;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,7 @@ public class Amplitude implements Provider {
   private String apiKey;
 
   @Override
-  public void identify(String identifier, String userId, Map<String, Object> attributes) {
+  public void identify(IdentifyRequest request) {
     URL url;
 
     try {
@@ -35,27 +36,30 @@ public class Amplitude implements Provider {
     }
 
     var event =
-        Map.of("user_id", identifier, "event_type", "$identify", "user_properties", attributes);
+        Map.of(
+            "user_id",
+            request.getIdentifier(),
+            "event_type",
+            "$identify",
+            "user_properties",
+            request.getUserAttributes());
     var body = Map.of("api_key", this.apiKey, "events", List.of(event));
 
     try {
       var response =
           Http.post(HttpOptions.builder().url(url.toString()).body(new JsonBody(body)).build());
       log.info(
-          "Identify [identifier=%s][statusCode=%s]".formatted(identifier, response.getStatus()));
+          "Identify [identifier=%s][statusCode=%s]"
+              .formatted(request.getIdentifier(), response.getStatus()));
     } catch (HttpConfigException | IOException | URISyntaxException e) {
       log.error(
-          "Could not Identify [identifier=%s][error=%s]".formatted(identifier, e.getMessage()));
+          "Could not Identify [identifier=%s][error=%s]"
+              .formatted(request.getIdentifier(), e.getMessage()));
     }
   }
 
   @Override
-  public void track(
-      String identifier,
-      String userId,
-      String eventName,
-      OffsetDateTime timestamp,
-      Map<String, Object> eventAttributes) {
+  public void track(TrackRequest request) {
     URL url;
 
     try {
@@ -69,21 +73,25 @@ public class Amplitude implements Provider {
     var event =
         Map.of(
             "user_id",
-            identifier,
+            request.getIdentifier(),
             "event_type",
-            eventName,
+            request.getEventName(),
             "event_properties",
-            eventAttributes,
+            request.getEventAttributes(),
             "time",
-            timestamp.toInstant().toEpochMilli());
+            request.getTimestamp().toInstant().toEpochMilli());
     var body = Map.of("api_key", this.apiKey, "events", List.of(event));
 
     try {
       var response =
           Http.post(HttpOptions.builder().url(url.toString()).body(new JsonBody(body)).build());
-      log.info("Track [identifier=%s][statusCode=%s]".formatted(identifier, response.getStatus()));
+      log.info(
+          "Track [identifier=%s][statusCode=%s]"
+              .formatted(request.getIdentifier(), response.getStatus()));
     } catch (HttpConfigException | IOException | URISyntaxException e) {
-      log.error("Could not Track [identifier=%s][error=%s]".formatted(identifier, e.getMessage()));
+      log.error(
+          "Could not Track [identifier=%s][error=%s]"
+              .formatted(request.getIdentifier(), e.getMessage()));
     }
   }
 }
