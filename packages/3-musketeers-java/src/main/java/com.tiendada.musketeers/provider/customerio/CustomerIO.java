@@ -5,13 +5,16 @@ import com.tiendada.musketeers.http.HttpOptions;
 import com.tiendada.musketeers.http.body.JsonBody;
 import com.tiendada.musketeers.http.exc.HttpConfigException;
 import com.tiendada.musketeers.provider.Provider;
+import com.tiendada.musketeers.provider.request.IdentifyRequest;
+import com.tiendada.musketeers.provider.request.TrackRequest;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.time.OffsetDateTime;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +27,7 @@ public class CustomerIO implements Provider {
   private String apiKey;
 
   @Override
-  public void identify(String identifier, String userId, Map<String, Object> attributes) {
+  public void identify(IdentifyRequest request) {
     URL url;
 
     try {
@@ -34,7 +37,7 @@ public class CustomerIO implements Provider {
       return;
     }
 
-    var identifiers = Map.of("id", identifier);
+    var identifiers = Map.of("id", request.getIdentifier());
     var body =
         Map.of(
             "type",
@@ -44,7 +47,7 @@ public class CustomerIO implements Provider {
             "identifiers",
             identifiers,
             "attributes",
-            attributes);
+            request.getIdentifier());
 
     try {
       var response =
@@ -55,20 +58,17 @@ public class CustomerIO implements Provider {
                   .body(new JsonBody(body))
                   .build());
       log.info(
-          "Identify [identifier=%s][statusCode=%s]".formatted(identifier, response.getStatus()));
+          "Identify [identifier=%s][statusCode=%s]"
+              .formatted(request.getIdentifier(), response.getStatus()));
     } catch (HttpConfigException | IOException | URISyntaxException e) {
       log.error(
-          "Could not Identify [identifier=%s][error=%s]".formatted(identifier, e.getMessage()));
+          "Could not Identify [identifier=%s][error=%s]"
+              .formatted(request.getIdentifier(), e.getMessage()));
     }
   }
 
   @Override
-  public void track(
-      String identifier,
-      String userId,
-      String eventName,
-      OffsetDateTime timestamp,
-      Map<String, Object> attributes) {
+  public void track(TrackRequest request) {
     URL url;
 
     try {
@@ -78,7 +78,29 @@ public class CustomerIO implements Provider {
       return;
     }
 
-    var identifiers = Map.of("id", identifier);
+    var campaign = new HashMap<String, String>();
+    var utmParams = request.getUtmParams();
+    if (Objects.nonNull(utmParams)) {
+      if (Objects.nonNull(utmParams.getUtmCampaign())) {
+        campaign.put("name", utmParams.getUtmCampaign());
+      }
+      if (Objects.nonNull(utmParams.getUtmSource())) {
+        campaign.put("source", utmParams.getUtmSource());
+      }
+      if (Objects.nonNull(utmParams.getUtmMedium())) {
+        campaign.put("medium", utmParams.getUtmMedium());
+      }
+      if (Objects.nonNull(utmParams.getUtmTerm())) {
+        campaign.put("term", utmParams.getUtmTerm());
+      }
+      if (Objects.nonNull(utmParams.getUtmContent())) {
+        campaign.put("content", utmParams.getUtmContent());
+      }
+    }
+
+    var context = Map.of("campaign", campaign);
+
+    var identifiers = Map.of("id", request.getIdentifier());
     var body =
         Map.of(
             "type",
@@ -88,11 +110,13 @@ public class CustomerIO implements Provider {
             "identifiers",
             identifiers,
             "name",
-            eventName,
+            request.getEventName(),
             "timestamp",
-            timestamp.toInstant().toEpochMilli(),
+            request.getTimestamp().toInstant().toEpochMilli(),
             "attributes",
-            attributes);
+            request.getEventAttributes(),
+            "context",
+            context);
 
     try {
       var response =
@@ -102,9 +126,13 @@ public class CustomerIO implements Provider {
                   .headers(this.buildCredentialHeaders())
                   .body(new JsonBody(body))
                   .build());
-      log.info("Track [identifier=%s][statusCode=%s]".formatted(identifier, response.getStatus()));
+      log.info(
+          "Track [identifier=%s][statusCode=%s]"
+              .formatted(request.getIdentifier(), response.getStatus()));
     } catch (HttpConfigException | IOException | URISyntaxException e) {
-      log.error("Could not Track [identifier=%s][error=%s]".formatted(identifier, e.getMessage()));
+      log.error(
+          "Could not Track [identifier=%s][error=%s]"
+              .formatted(request.getIdentifier(), e.getMessage()));
     }
   }
 
