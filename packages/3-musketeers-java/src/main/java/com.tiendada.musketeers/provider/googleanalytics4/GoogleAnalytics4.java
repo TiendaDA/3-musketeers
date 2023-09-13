@@ -40,7 +40,28 @@ public class GoogleAnalytics4 implements Provider {
       throw new RuntimeException(e);
     }
 
-    var event = Map.of("name", request.getEventName(), "params", request.getEventAttributes());
+    var eventAttributes = request.getEventAttributes();
+
+    var utmParams = request.getUtmParams();
+    if (Objects.nonNull(utmParams)) {
+      if (Objects.nonNull(utmParams.getUtmCampaign())) {
+        eventAttributes.put("utm_campaign", utmParams.getUtmCampaign());
+      }
+      if (Objects.nonNull(utmParams.getUtmSource())) {
+        eventAttributes.put("utm_source", utmParams.getUtmSource());
+      }
+      if (Objects.nonNull(utmParams.getUtmMedium())) {
+        eventAttributes.put("utm_medium", utmParams.getUtmMedium());
+      }
+      if (Objects.nonNull(utmParams.getUtmTerm())) {
+        eventAttributes.put("utm_term", utmParams.getUtmTerm());
+      }
+      if (Objects.nonNull(utmParams.getUtmContent())) {
+        eventAttributes.put("utm_content", utmParams.getUtmContent());
+      }
+    }
+
+    var event = Map.of("name", request.getEventName(), "params", eventAttributes);
     var body =
         Map.of(
             "client_id",

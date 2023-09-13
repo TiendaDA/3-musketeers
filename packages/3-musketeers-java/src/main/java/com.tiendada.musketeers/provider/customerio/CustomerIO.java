@@ -12,7 +12,9 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +78,28 @@ public class CustomerIO implements Provider {
       return;
     }
 
+    var campaign = new HashMap<String, String>();
+    var utmParams = request.getUtmParams();
+    if (Objects.nonNull(utmParams)) {
+      if (Objects.nonNull(utmParams.getUtmCampaign())) {
+        campaign.put("name", utmParams.getUtmCampaign());
+      }
+      if (Objects.nonNull(utmParams.getUtmSource())) {
+        campaign.put("source", utmParams.getUtmSource());
+      }
+      if (Objects.nonNull(utmParams.getUtmMedium())) {
+        campaign.put("medium", utmParams.getUtmMedium());
+      }
+      if (Objects.nonNull(utmParams.getUtmTerm())) {
+        campaign.put("term", utmParams.getUtmTerm());
+      }
+      if (Objects.nonNull(utmParams.getUtmContent())) {
+        campaign.put("content", utmParams.getUtmContent());
+      }
+    }
+
+    var context = Map.of("campaign", campaign);
+
     var identifiers = Map.of("id", request.getIdentifier());
     var body =
         Map.of(
@@ -90,7 +114,9 @@ public class CustomerIO implements Provider {
             "timestamp",
             request.getTimestamp().toInstant().toEpochMilli(),
             "attributes",
-            request.getEventAttributes());
+            request.getEventAttributes(),
+            "context",
+            context);
 
     try {
       var response =
