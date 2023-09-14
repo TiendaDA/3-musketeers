@@ -18,3 +18,56 @@
 </p>
 
 ## ⚡️ Quickstart
+
+#### Initialization
+```java
+var t3m = new T3M()
+.registerProvider(new GoogleAnalytics4("ga4ApiSecret", "ga4MeasurementId"))
+.registerProvider(new CustomerIO("customerioSiteId", "customerioApiKey"))
+.registerProvider(new Amplitude("amplitudeApiKey"));
+```
+
+#### Use
+```java
+var trackRequest = TrackRequest.builder().build();
+t3m.track(List.of(trackRequest));
+```
+
+## 👀 Examples
+
+#### Google Analytics 4, CustomerIO -> Event: "SIGN_UP"
+```java
+    var identifier =
+        Identifier.builder()
+        .providers(
+        Map.of(
+            GoogleAnalytics4.name,
+            Map.of("client_id", "GA1.1...", "user_id", "USER_1"),
+            CustomerIO.name,
+            Map.of("id", "USER_1")))
+        .build();
+
+    utmParams = UTMParams.builder()
+        .utmCampaign("campaign")
+        .utmContent("content")
+        .utmMedium("medium")
+        .utmSource("source")
+        .utmTerm("term")
+        .build();
+
+    var trackRequest = TrackRequest.builder()
+        .identifier(identifier)
+        .eventName("SIGN_UP")
+        .eventAttributes(Map.of("first_name", "first_name", "email", "email"))
+        .utmParams(utmParams)
+        .timestamp(OffsetDateTime.now())
+        .build();
+
+    t3m.track(List.of(trackRequest));
+```
+
+## 🎯 Included Providers
+
+- **Google Analytics 4** [[definition]](https://github.com/TiendaDA/3-musketeers/blob/develop/packages/3-musketeers-java/src/main/java/com.tiendada.musketeers/provider/googleanalytics4/GoogleAnalytics4.java)
+- **Amplitude** [[definition]](https://github.com/TiendaDA/3-musketeers/blob/develop/packages/3-musketeers-java/src/main/java/com.tiendada.musketeers/provider/amplitude/Amplitude.java)
+- **CustomerIO** [[definition]](https://github.com/TiendaDA/3-musketeers/blob/develop/packages/3-musketeers-java/src/main/java/com.tiendada.musketeers/provider/customerio/CustomerIO.java)
