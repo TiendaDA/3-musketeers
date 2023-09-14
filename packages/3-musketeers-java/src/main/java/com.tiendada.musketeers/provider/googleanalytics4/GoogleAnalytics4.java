@@ -19,11 +19,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @AllArgsConstructor
-public class GoogleAnalytics4 implements Provider {
+public class GoogleAnalytics4 extends Provider {
   private static final Logger log = LoggerFactory.getLogger(GoogleAnalytics4.class);
+  public static String name = "GA4";
   private final String BASE_URL = "https://www.google-analytics.com/mp/collect";
   private final String apiSecret;
   private final String measurementId;
+
+  @Override
+  public String getName() {
+    return name;
+  }
 
   @Override
   public void identify(IdentifyRequest request) {
@@ -32,6 +38,12 @@ public class GoogleAnalytics4 implements Provider {
 
   @Override
   public void track(TrackRequest request) {
+    var identifier = this.getProviderIdentifier(request.getIdentifier());
+    if (!this.isValidIdentifier(identifier)) {
+      log.debug("Track: Identifier not found [eventName=%s]".formatted(request.getEventName()));
+      return;
+    }
+
     URL url;
 
     try {
@@ -65,9 +77,9 @@ public class GoogleAnalytics4 implements Provider {
     var body =
         Map.of(
             "client_id",
-            request.getIdentifier(),
+            identifier.get("client_id"),
             "user_id",
-            request.getUserId(),
+            identifier.get("user_id"),
             "timestamp_micros",
             request.getTimestamp().toInstant().toEpochMilli() * 1000,
             "events",
@@ -79,23 +91,25 @@ public class GoogleAnalytics4 implements Provider {
 
       if (Objects.nonNull(response)) {
         log.info(
-            "Tracking"
+            "Tracking "
                 + "[statusCode=%d][event=%s][identifier=%s]"
-                    .formatted(
-                        response.getStatus(), request.getEventName(), request.getIdentifier()));
+                    .formatted(response.getStatus(), request.getEventName(), identifier));
       } else {
-        log.warn("Empty ga4 event response [identifier=%s]".formatted(request.getIdentifier()));
+        log.warn("Empty ga4 event response [identifier=%s]".formatted(identifier));
       }
     } catch (IOException | URISyntaxException | HttpConfigException e) {
-      log.error(
-          "Could not send ga4 event http request [identifier=%s]"
-              .formatted(request.getIdentifier()),
-          e);
+      log.error("Could not send ga4 event http request [identifier=%s]".formatted(identifier), e);
     }
   }
 
   private URL buildAuthenticatedUrl() throws MalformedURLException {
     return new URL(
         this.BASE_URL + "?api_secret=" + this.apiSecret + "&measurement_id=" + this.measurementId);
+  }
+
+  private Boolean isValidIdentifier(Map<String, String> identifier) {
+    return Objects.nonNull(identifier)
+        && Objects.nonNull(identifier.get("client_id"))
+        && Objects.nonNull(identifier.get("user_id"));
   }
 }

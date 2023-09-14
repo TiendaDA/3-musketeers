@@ -13,18 +13,31 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @AllArgsConstructor
-public class Amplitude implements Provider {
+public class Amplitude extends Provider {
   private static final Logger log = LoggerFactory.getLogger(Amplitude.class);
+  public static String name = "AMPLITUDE";
   private final String BASE_URL = "https://api2.amplitude.com";
   private String apiKey;
 
   @Override
+  public String getName() {
+    return name;
+  }
+
+  @Override
   public void identify(IdentifyRequest request) {
+    var identifier = this.getProviderIdentifier(request.getIdentifier());
+    if (!this.isValidIdentifier(identifier)) {
+      log.debug("Identify: Identifier not found");
+      return;
+    }
+
     URL url;
 
     try {
@@ -38,7 +51,7 @@ public class Amplitude implements Provider {
     var event =
         Map.of(
             "user_id",
-            request.getIdentifier(),
+            identifier.get("user_id"),
             "event_type",
             "$identify",
             "user_properties",
@@ -60,6 +73,12 @@ public class Amplitude implements Provider {
 
   @Override
   public void track(TrackRequest request) {
+    var identifier = this.getProviderIdentifier(request.getIdentifier());
+    if (!this.isValidIdentifier(identifier)) {
+      log.debug("Track: Identifier not found [eventName=%s]".formatted(request.getEventName()));
+      return;
+    }
+
     URL url;
 
     try {
@@ -73,13 +92,14 @@ public class Amplitude implements Provider {
     var event =
         Map.of(
             "user_id",
-            request.getIdentifier(),
+            identifier.get("user_id"),
             "event_type",
             request.getEventName(),
             "event_properties",
             request.getEventAttributes(),
             "time",
             request.getTimestamp().toInstant().toEpochMilli());
+
     var body = Map.of("api_key", this.apiKey, "events", List.of(event));
 
     try {
@@ -93,5 +113,9 @@ public class Amplitude implements Provider {
           "Could not Track [identifier=%s][error=%s]"
               .formatted(request.getIdentifier(), e.getMessage()));
     }
+  }
+
+  private Boolean isValidIdentifier(Map<String, String> identifier) {
+    return Objects.nonNull(identifier) && Objects.nonNull(identifier.get("user_id"));
   }
 }

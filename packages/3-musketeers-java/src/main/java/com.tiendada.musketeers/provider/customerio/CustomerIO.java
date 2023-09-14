@@ -20,14 +20,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @AllArgsConstructor
-public class CustomerIO implements Provider {
+public class CustomerIO extends Provider {
   private static final Logger log = LoggerFactory.getLogger(CustomerIO.class);
+  public static String name = "CUSTOMERIO";
   private final String SINGLE_REQUEST_URL = "https://track.customer.io/api/v2/entity";
   private String siteId;
   private String apiKey;
 
   @Override
+  public String getName() {
+    return name;
+  }
+
+  @Override
   public void identify(IdentifyRequest request) {
+    var identifier = this.getProviderIdentifier(request.getIdentifier());
+    if (!this.isValidIdentifier(identifier)) {
+      log.debug("Identify: Identifier not found");
+      return;
+    }
+
     URL url;
 
     try {
@@ -69,6 +81,12 @@ public class CustomerIO implements Provider {
 
   @Override
   public void track(TrackRequest request) {
+    var identifier = this.getProviderIdentifier(request.getIdentifier());
+    if (!this.isValidIdentifier(identifier)) {
+      log.debug("Track: Identifier not found [eventName=%s]".formatted(request.getEventName()));
+      return;
+    }
+
     URL url;
 
     try {
@@ -100,7 +118,16 @@ public class CustomerIO implements Provider {
 
     var context = Map.of("campaign", campaign);
 
-    var identifiers = Map.of("id", request.getIdentifier());
+    var identifiers = new HashMap<String, String>();
+
+    if (Objects.nonNull(identifier.get("id"))) {
+      identifiers.put("id", identifier.get("id"));
+    } else if (Objects.nonNull(identifier.get("email"))) {
+      identifiers.put("email", identifier.get("email"));
+    } else {
+      identifiers.put("co_id", identifier.get("co_id"));
+    }
+
     var body =
         Map.of(
             "type",
@@ -127,17 +154,22 @@ public class CustomerIO implements Provider {
                   .body(new JsonBody(body))
                   .build());
       log.info(
-          "Track [identifier=%s][statusCode=%s]"
-              .formatted(request.getIdentifier(), response.getStatus()));
+          "Track [identifier=%s][event=%s][statusCode=%s]"
+              .formatted(identifiers, request.getEventName(), response.getStatus()));
     } catch (HttpConfigException | IOException | URISyntaxException e) {
-      log.error(
-          "Could not Track [identifier=%s][error=%s]"
-              .formatted(request.getIdentifier(), e.getMessage()));
+      log.error("Could not Track [identifier=%s][error=%s]".formatted(identifiers, e.getMessage()));
     }
   }
 
   private Map<String, String> buildCredentialHeaders() {
     var credential = (this.siteId + ":" + this.apiKey).getBytes();
     return Map.of("Authorization", "Basic " + Base64.getEncoder().encodeToString(credential));
+  }
+
+  private Boolean isValidIdentifier(Map<String, String> identifier) {
+    return Objects.nonNull(identifier)
+        && (Objects.nonNull(identifier.get("id"))
+            || Objects.nonNull(identifier.get("email"))
+            || Objects.nonNull(identifier.get("co_id")));
   }
 }
