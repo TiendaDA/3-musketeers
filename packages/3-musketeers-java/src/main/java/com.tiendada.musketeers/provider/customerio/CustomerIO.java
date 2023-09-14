@@ -96,22 +96,29 @@ public class CustomerIO extends Provider {
       return;
     }
 
+    var eventAttributes = request.getEventAttributes();
+
     var campaign = new HashMap<String, String>();
     var utmParams = request.getUtmParams();
     if (Objects.nonNull(utmParams)) {
       if (Objects.nonNull(utmParams.getUtmCampaign())) {
+        eventAttributes.put("utm_campaign", utmParams.getUtmCampaign());
         campaign.put("name", utmParams.getUtmCampaign());
       }
       if (Objects.nonNull(utmParams.getUtmSource())) {
+        eventAttributes.put("utm_source", utmParams.getUtmCampaign());
         campaign.put("source", utmParams.getUtmSource());
       }
       if (Objects.nonNull(utmParams.getUtmMedium())) {
+        eventAttributes.put("utm_medium", utmParams.getUtmCampaign());
         campaign.put("medium", utmParams.getUtmMedium());
       }
       if (Objects.nonNull(utmParams.getUtmTerm())) {
+        eventAttributes.put("utm_term", utmParams.getUtmCampaign());
         campaign.put("term", utmParams.getUtmTerm());
       }
       if (Objects.nonNull(utmParams.getUtmContent())) {
+        eventAttributes.put("utm_content", utmParams.getUtmCampaign());
         campaign.put("content", utmParams.getUtmContent());
       }
     }
@@ -141,7 +148,7 @@ public class CustomerIO extends Provider {
             "timestamp",
             request.getTimestamp().toInstant().toEpochMilli(),
             "attributes",
-            request.getEventAttributes(),
+            eventAttributes,
             "context",
             context);
 

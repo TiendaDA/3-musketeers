@@ -89,6 +89,26 @@ public class Amplitude extends Provider {
       return;
     }
 
+    var eventAttributes = request.getEventAttributes();
+    var utmParams = request.getUtmParams();
+    if (Objects.nonNull(utmParams)) {
+      if (Objects.nonNull(utmParams.getUtmCampaign())) {
+        eventAttributes.put("utm_campaign", utmParams.getUtmCampaign());
+      }
+      if (Objects.nonNull(utmParams.getUtmSource())) {
+        eventAttributes.put("utm_source", utmParams.getUtmSource());
+      }
+      if (Objects.nonNull(utmParams.getUtmMedium())) {
+        eventAttributes.put("utm_medium", utmParams.getUtmMedium());
+      }
+      if (Objects.nonNull(utmParams.getUtmTerm())) {
+        eventAttributes.put("utm_term", utmParams.getUtmTerm());
+      }
+      if (Objects.nonNull(utmParams.getUtmContent())) {
+        eventAttributes.put("utm_content", utmParams.getUtmContent());
+      }
+    }
+
     var event =
         Map.of(
             "user_id",
@@ -96,7 +116,7 @@ public class Amplitude extends Provider {
             "event_type",
             request.getEventName(),
             "event_properties",
-            request.getEventAttributes(),
+            eventAttributes,
             "time",
             request.getTimestamp().toInstant().toEpochMilli());
 
@@ -105,13 +125,9 @@ public class Amplitude extends Provider {
     try {
       var response =
           Http.post(HttpOptions.builder().url(url.toString()).body(new JsonBody(body)).build());
-      log.info(
-          "Track [identifier=%s][statusCode=%s]"
-              .formatted(request.getIdentifier(), response.getStatus()));
+      log.info("Track [identifier=%s][statusCode=%s]".formatted(identifier, response.getStatus()));
     } catch (HttpConfigException | IOException | URISyntaxException e) {
-      log.error(
-          "Could not Track [identifier=%s][error=%s]"
-              .formatted(request.getIdentifier(), e.getMessage()));
+      log.error("Could not Track [identifier=%s][error=%s]".formatted(identifier, e.getMessage()));
     }
   }
 
