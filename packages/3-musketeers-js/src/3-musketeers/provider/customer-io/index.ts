@@ -1,92 +1,45 @@
-import {loadScript} from '../../../utils';
+import {loadScriptRaw} from '../../../utils';
 import {Provider, ProviderInitOptions} from '../provider';
 
-type CustomerIoOptions = {
-  useArrayParams?: boolean;
-  autoTrackPage?: boolean;
-  useInApp?: boolean;
-  crossSiteSupport?: boolean;
-  enableInMemoryStorage?: boolean;
-};
-const defaultOptions: CustomerIoOptions = {
-  useArrayParams: true,
-  autoTrackPage: true,
-};
+const customerIoScript =
+  '!function(){var analytics=window.analytics=window.analytics||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","debug","page","once","off","on","addSourceMiddleware","addIntegrationMiddleware","setAnonymousId","addDestinationMiddleware"];analytics.factory=function(e){return function(){var t=Array.prototype.slice.call(arguments);t.unshift(e);analytics.push(t);return analytics}};for(var e=0;e<analytics.methods.length;e++){var key=analytics.methods[e];analytics[key]=analytics.factory(key)}analytics.load=function(key,e){var t=document.createElement("script");t.type="text/javascript";t.async=!0;t.src="https://cdp.customer.io/v1/analytics-js/snippet/" + key + "/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(t,n);analytics._writeKey=key;analytics._loadOptions=e};analytics.SNIPPET_VERSION="4.15.3"; }}()';
 
 export class CustomerIo extends Provider {
   static providerName: string = 'customer-io';
-  mapTrackEventName: ProviderInitOptions['mapTrackEventName'];
+  mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
 
-  init(
-    siteId: string,
-    options: ProviderInitOptions = {},
-    customerIoOptions: CustomerIoOptions = defaultOptions,
-    location: 'EU' | 'US' = 'US'
-  ): void {
-    Provider.logAction('INIT', `[${CustomerIo.providerName}]`, siteId);
+  init(customerIoKey: string, options: ProviderInitOptions = {}): void {
+    Provider.logAction('INIT', `[${CustomerIo.providerName}]`, customerIoKey);
     this.saveOptions(options);
+    loadScriptRaw(customerIoScript, {
+      async: true,
+    });
 
-    const {
-      useArrayParams,
-      autoTrackPage,
-      useInApp,
-      crossSiteSupport,
-      enableInMemoryStorage,
-    } = customerIoOptions;
-
-    const _cio = window._cio || [];
-
-    const a = function (f) {
-      return function () {
-        // eslint-disable-next-line prefer-rest-params
-        _cio.push([f].concat(Array.prototype.slice.call(arguments, 0)));
-      };
-    };
-    const methods = [
-      'load',
-      'identify',
-      'sidentify',
-      'track',
-      'page',
-      'on',
-      'off',
-    ];
-
-    for (const method of methods) {
-      _cio[method] = a(method);
-    }
-
-    let src = 'https://assets.customer.io/assets/track.js';
-    if (location === 'EU')
-      src = 'https://assets.customer.io/assets/track-eu.js';
-
-    const attributes: Record<string, string> = {
-      id: 'cio-tracker',
-      'data-site-id': siteId,
-      'data-use-array-params': `${!!useArrayParams}`,
-      'data-auto-track-page': `${!!autoTrackPage}`,
-      'data-use-in-app': `${!!useInApp}`,
-      'data-cross-site-support': `${!!crossSiteSupport}`,
-      'data-enable-in-memory-storage': `${!!enableInMemoryStorage}`,
-    };
-
-    loadScript(src, {async: true, attributes});
+    window.analytics.load(customerIoKey);
   }
   ready(): boolean {
-    return !!window._cio;
+    return !!window.analytics;
   }
   pageView(name: string, params?: Record<string, string> | undefined): void {
     Provider.logAction('PAGE', `[${CustomerIo.providerName}]`, name, params);
-    window._cio.page(name, params);
+    window.analytics.page({name, ...params});
   }
   track(
     eventName: string,
     params?: Record<string, unknown>,
     callback?: () => void
   ): void {
-    const name = this.getTrackEventName(eventName);
-    Provider.logAction('TRACK', `[${CustomerIo.providerName}]`, name, params);
-    window._cio.track(name, params);
+    const {eventName: mappedName, params: mappedParams} = this.getTrackEvent(
+      eventName,
+      params
+    );
+    Provider.logAction(
+      'TRACK',
+      `[${CustomerIo.providerName}]`,
+      mappedName,
+      mappedParams
+    );
+    window.analytics.track(mappedName, mappedParams);
     if (typeof callback === 'function') callback();
   }
   identify(userId: string, params?: Record<string, unknown> | undefined): void {
@@ -97,10 +50,6 @@ export class CustomerIo extends Provider {
       params
     );
 
-    window._cio.identify({
-      id: userId,
-      created_at: Date.now(),
-      ...params,
-    });
+    window.analytics.identify(userId, params);
   }
 }

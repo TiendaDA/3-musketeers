@@ -4,13 +4,11 @@ interface Window {
   gtag: (...args: unknown[]) => void;
   t3musketeers: unknown;
   amplitude: {
-    getInstance: (name?: string) => {
-      init: (...args: unknown[]) => void;
-      logEvent: (...args: unknown[]) => void;
-      identify: (...args: unknown[]) => void;
-    };
+    init: (...args: unknown[]) => void;
+    track: (...args: unknown[]) => void;
     Identify: (...args: unknown[]) => void;
     setUserId: (...args: unknown[]) => void;
+    identify: (...args: unknown[]) => void;
   };
 
   _fbq: unknown;
@@ -21,8 +19,9 @@ interface Window {
     version: string;
     queue: unknown[];
   };
-  _cio: {
-    push: (...args: unknown[]) => void;
+  analytics: {
+    // push: (...args: unknown[]) => void;
+    load: (...args: unknown[]) => void;
     page: (...args: unknown[]) => void;
     track: (...args: unknown[]) => void;
     identify: (...args: unknown[]) => void;

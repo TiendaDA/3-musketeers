@@ -17,6 +17,7 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.concurrent.FutureCallback;
@@ -56,6 +57,8 @@ public class Http {
       // body
       if (requestBase instanceof HttpPost) {
         ((HttpPost) requestBase).setEntity(options.getBody().toEntity());
+      } else if (requestBase instanceof HttpPut) {
+        ((HttpPut) requestBase).setEntity(options.getBody().toEntity());
       }
     }
 
@@ -190,6 +193,12 @@ public class Http {
       throws IOException, URISyntaxException, HttpConfigException {
     var httpPost = new HttpPost(options.getUrl());
     return request(httpPost, options);
+  }
+
+  public static <T, K> HttpResponse<T, K> put(HttpOptions<T, K> options)
+      throws IOException, URISyntaxException, HttpConfigException {
+    var httpPut = new HttpPut(options.getUrl());
+    return request(httpPut, options);
   }
 
   public static <T, K> Mono<HttpResponse<T, K>> getAsync(HttpOptions<T, K> options) {

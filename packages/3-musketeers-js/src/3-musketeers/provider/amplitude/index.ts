@@ -4,7 +4,7 @@ import {loadScriptRaw} from '../../../utils';
 
 export class Amplitude extends Provider {
   static providerName: string = 'amplitude';
-  mapTrackEventName: ProviderInitOptions['mapTrackEventName'];
+  mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
 
   init(
     apiKey: string,
@@ -14,14 +14,13 @@ export class Amplitude extends Provider {
   ): void {
     Provider.logAction('INIT', `[${Amplitude.providerName}]`, apiKey);
     this.saveOptions(options);
+    loadScriptRaw(amplitudeScript);
 
     if (userId) {
-      window.amplitude.getInstance().init(apiKey, null, amplitudeInitOptions);
+      window.amplitude.init(apiKey, null, amplitudeInitOptions);
     } else {
-      window.amplitude.getInstance().init(apiKey, userId, amplitudeInitOptions);
+      window.amplitude.init(apiKey, userId, amplitudeInitOptions);
     }
-
-    loadScriptRaw(amplitudeScript);
   }
 
   ready(): boolean {
@@ -35,9 +34,17 @@ export class Amplitude extends Provider {
     params?: Record<string, unknown>,
     callback?: () => void
   ): void {
-    const name = this.getTrackEventName(eventName);
-    Provider.logAction('TRACK', `[${Amplitude.providerName}]`, name, params);
-    window.amplitude.getInstance().logEvent(name, params);
+    const {eventName: mappedName, params: mappedParams} = this.getTrackEvent(
+      eventName,
+      params
+    );
+    Provider.logAction(
+      'TRACK',
+      `[${Amplitude.providerName}]`,
+      mappedName,
+      mappedParams
+    );
+    window.amplitude.track(mappedName, mappedParams);
     if (typeof callback === 'function') callback();
   }
 
@@ -51,36 +58,9 @@ export class Amplitude extends Provider {
     window.amplitude.setUserId(userId);
     const identifyEvent = new window.amplitude.Identify();
     Object.keys(params).forEach((k) => identifyEvent.set(k, params[k]));
-    window.amplitude.getInstance().identify(identifyEvent);
+    window.amplitude.identify(identifyEvent);
   }
 }
 
-const amplitudeScript = `
-(function(e,t){var n=e.amplitude||{_q:[],_iq:{}};var r=t.createElement("script")
-r.type="text/javascript";
-r.integrity="sha384-5fhzC8Xw3m+x5cBag4AMKRdf900vw3AoaLty2vYfcKIX1iEsYRHZF4RLXIsu2o+F"
-r.crossOrigin="anonymous";r.async=true;
-r.src="https://cdn.amplitude.com/libs/amplitude-8.21.4-min.gz.js";
-r.onload=function(){if(!e.amplitude.runQueuedFunctions){console.log(
-"[Amplitude] Error: could not load SDK")}};var s=t.getElementsByTagName("script"
-)[0];s.parentNode.insertBefore(r,s);function i(e,t){e.prototype[t]=function(){
-this._q.push([t].concat(Array.prototype.slice.call(arguments,0)));return this}}
-var o=function(){this._q=[];return this};var a=["add","append","clearAll",
-"prepend","set","setOnce","unset","preInsert","postInsert","remove"];for(
-var c=0;c<a.length;c++){i(o,a[c])}n.Identify=o;var l=function(){this._q=[];
-return this};var u=["setProductId","setQuantity","setPrice","setRevenueType",
-"setEventProperties"];for(var p=0;p<u.length;p++){i(l,u[p])}n.Revenue=l;var d=[
-"init","logEvent","logRevenue","setUserId","setUserProperties","setOptOut",
-"setVersionName","setDomain","setDeviceId","enableTracking",
-"setGlobalUserProperties","identify","clearUserProperties","setGroup",
-"logRevenueV2","regenerateDeviceId","groupIdentify","onInit","onNewSessionStart"
-,"logEventWithTimestamp","logEventWithGroups","setSessionId","resetSessionId",
-"getDeviceId","getUserId","setMinTimeBetweenSessionsMillis",
-"setEventUploadThreshold","setUseDynamicConfig","setServerZone","setServerUrl",
-"sendEvents","setLibrary","setTransport"];function v(t){function e(e){t[e
-]=function(){t._q.push([e].concat(Array.prototype.slice.call(arguments,0)))}}
-for(var n=0;n<d.length;n++){e(d[n])}}v(n);n.getInstance=function(e){e=(
-!e||e.length===0?"$default_instance":e).toLowerCase();if(
-!Object.prototype.hasOwnProperty.call(n._iq,e)){n._iq[e]={_q:[]};v(n._iq[e])}
-return n._iq[e]};e.amplitude=n})(window,document);
-`;
+const amplitudeScript =
+  '!function(){"use strict";!function(e,t){var n=e.amplitude||{_q:[],_iq:{}};if(n.invoked)e.console&&console.error&&console.error("Amplitude snippet has been loaded.");else{var r=function(e,t){e.prototype[t]=function(){return this._q.push({name:t,args:Array.prototype.slice.call(arguments,0)}),this}},s=function(e,t,n){return function(r){e._q.push({name:t,args:Array.prototype.slice.call(n,0),resolve:r})}},o=function(e,t,n){e[t]=function(){if(n)return{promise:new Promise(s(e,t,Array.prototype.slice.call(arguments)))}}},i=function(e){for(var t=0;t<m.length;t++)o(e,m[t],!1);for(var n=0;n<g.length;n++)o(e,g[n],!0)};n.invoked=!0;var u=t.createElement("script");u.type="text/javascript",u.integrity="sha384-x0ik2D45ZDEEEpYpEuDpmj05fY91P7EOZkgdKmq4dKL/ZAVcufJ+nULFtGn0HIZE",u.crossOrigin="anonymous",u.async=!0,u.src="https://cdn.amplitude.com/libs/analytics-browser-2.0.0-min.js.gz",u.onload=function(){e.amplitude.runQueuedFunctions||console.log("[Amplitude] Error: could not load SDK")};var a=t.getElementsByTagName("script")[0];a.parentNode.insertBefore(u,a);for(var c=function(){return this._q=[],this},p=["add","append","clearAll","prepend","set","setOnce","unset","preInsert","postInsert","remove","getUserProperties"],l=0;l<p.length;l++)r(c,p[l]);n.Identify=c;for(var d=function(){return this._q=[],this},f=["getEventProperties","setProductId","setQuantity","setPrice","setRevenue","setRevenueType","setEventProperties"],v=0;v<f.length;v++)r(d,f[v]);n.Revenue=d;var m=["getDeviceId","setDeviceId","getSessionId","setSessionId","getUserId","setUserId","setOptOut","setTransport","reset","extendSession"],g=["init","add","remove","track","logEvent","identify","groupIdentify","setGroup","revenue","flush"];i(n),n.createInstance=function(e){return n._iq[e]={_q:[]},i(n._iq[e]),n._iq[e]},e.amplitude=n}}(window,document)}();';
