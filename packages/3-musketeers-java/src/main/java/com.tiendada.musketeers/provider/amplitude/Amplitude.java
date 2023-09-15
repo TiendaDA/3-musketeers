@@ -8,9 +8,8 @@ import com.tiendada.musketeers.provider.Provider;
 import com.tiendada.musketeers.provider.request.IdentifyRequest;
 import com.tiendada.musketeers.provider.request.TrackRequest;
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -22,7 +21,7 @@ import org.slf4j.LoggerFactory;
 public class Amplitude extends Provider {
   private static final Logger log = LoggerFactory.getLogger(Amplitude.class);
   public static String name = "AMPLITUDE";
-  private final String BASE_URL = "https://api2.amplitude.com";
+  private final String BASE_URL = "https://api2.amplitude.com/";
   private String apiKey;
 
   @Override
@@ -38,16 +37,7 @@ public class Amplitude extends Provider {
       return;
     }
 
-    URL url;
-
-    try {
-      url = new URL(this.BASE_URL);
-      url = new URL(url, "/identify");
-    } catch (MalformedURLException e) {
-      log.error(e.toString());
-      return;
-    }
-
+    var url = URI.create(this.BASE_URL).resolve("./identify");
     var event =
         Map.of(
             "user_id",
@@ -79,15 +69,7 @@ public class Amplitude extends Provider {
       return;
     }
 
-    URL url;
-
-    try {
-      url = new URL(this.BASE_URL);
-      url = new URL(url, "/2/httpapi");
-    } catch (MalformedURLException e) {
-      log.error(e.toString());
-      return;
-    }
+    var url = URI.create(this.BASE_URL).resolve("./2/httpapi");
 
     var eventAttributes = request.getEventAttributes();
     var utmParams = request.getUtmParams();
