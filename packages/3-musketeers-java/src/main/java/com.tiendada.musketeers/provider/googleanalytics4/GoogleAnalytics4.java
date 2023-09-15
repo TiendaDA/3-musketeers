@@ -91,7 +91,7 @@ public class GoogleAnalytics4 extends Provider {
 
       if (Objects.nonNull(response)) {
         log.info(
-            "Tracking "
+            "Track "
                 + "[statusCode=%d][event=%s][identifier=%s]"
                     .formatted(response.getStatus(), request.getEventName(), identifier));
       } else {
