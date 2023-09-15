@@ -20,9 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @AllArgsConstructor
-public class CustomerIO extends Provider {
-  private static final Logger log = LoggerFactory.getLogger(CustomerIO.class);
-  public static String name = "CUSTOMERIO";
+public class CustomerIOJourney extends Provider {
+  private static final Logger log = LoggerFactory.getLogger(CustomerIOJourney.class);
+  public static String name = "CUSTOMERIO_JOURNEY";
   private final String SINGLE_REQUEST_URL = "https://track.customer.io/api/v2/entity";
   private String siteId;
   private String apiKey;
@@ -59,7 +59,7 @@ public class CustomerIO extends Provider {
             "identifiers",
             identifiers,
             "attributes",
-            request.getIdentifier());
+            request.getUserAttributes());
 
     try {
       var response =
