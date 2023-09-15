@@ -23,7 +23,7 @@
 ```java
 var t3m = new T3M()
 .registerProvider(new GoogleAnalytics4("ga4ApiSecret", "ga4MeasurementId"))
-.registerProvider(new CustomerIO("customerioSiteId", "customerioApiKey"))
+.registerProvider(new CustomerIODataPipeline("customerioDataPipelineApiKey"))
 .registerProvider(new Amplitude("amplitudeApiKey"));
 ```
 
@@ -35,7 +35,7 @@ t3m.track(List.of(trackRequest));
 
 ## 👀 Examples
 
-#### Google Analytics 4, CustomerIO -> Event: "SIGN_UP"
+#### Google Analytics 4, CustomerIODataPipeline -> Event: "SIGN_UP"
 ```java
     var identifier =
         Identifier.builder()
@@ -43,8 +43,8 @@ t3m.track(List.of(trackRequest));
         Map.of(
             GoogleAnalytics4.name,
             Map.of("client_id", "GA1.1...", "user_id", "USER_1"),
-            CustomerIO.name,
-            Map.of("id", "USER_1")))
+            CustomerIODataPipeline.name,
+            Map.of("user_id", "USER_1")))
         .build();
 
     utmParams = UTMParams.builder()
@@ -70,4 +70,5 @@ t3m.track(List.of(trackRequest));
 
 - **Google Analytics 4** [[definition]](https://github.com/TiendaDA/3-musketeers/blob/develop/packages/3-musketeers-java/src/main/java/com.tiendada.musketeers/provider/googleanalytics4/GoogleAnalytics4.java)
 - **Amplitude** [[definition]](https://github.com/TiendaDA/3-musketeers/blob/develop/packages/3-musketeers-java/src/main/java/com.tiendada.musketeers/provider/amplitude/Amplitude.java)
-- **CustomerIO** [[definition]](https://github.com/TiendaDA/3-musketeers/blob/develop/packages/3-musketeers-java/src/main/java/com.tiendada.musketeers/provider/customerio/CustomerIO.java)
+- **CustomerIOJourney** [[definition]](https://github.com/TiendaDA/3-musketeers/blob/develop/packages/3-musketeers-java/src/main/java/com.tiendada.musketeers/provider/customerio/CustomerIOJourney.java)
+- **CustomerIODataPipeline** [[definition]](https://github.com/TiendaDA/3-musketeers/blob/develop/packages/3-musketeers-java/src/main/java/com.tiendada.musketeers/provider/customerio/CustomerIODataPipeline.java)
