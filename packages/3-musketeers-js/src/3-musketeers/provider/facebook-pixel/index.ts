@@ -44,6 +44,7 @@ export class FacebookPixel extends Provider {
     loadScript(`https://connect.facebook.net/en_US/fbevents.js`);
 
     window.fbq('init', pixelId, advancedMatching);
+    window.fbq('track', 'PageView');
   }
   ready(): boolean {
     return !!window.fbq;
