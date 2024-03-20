@@ -4,6 +4,7 @@ import {loadScriptRaw} from '../../../utils';
 
 export class Amplitude extends Provider {
   static providerName: string = 'amplitude';
+  providerName: string = 'amplitude';
   mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
 
   init(
@@ -12,7 +13,7 @@ export class Amplitude extends Provider {
     userId?: string,
     amplitudeInitOptions: unknown = {}
   ): void {
-    Provider.logAction('INIT', `[${Amplitude.providerName}]`, apiKey);
+    Provider.logAction('INIT', `[${this.providerName}]`, apiKey);
     this.saveOptions(options);
     loadScriptRaw(amplitudeScript);
 
@@ -40,7 +41,7 @@ export class Amplitude extends Provider {
     );
     Provider.logAction(
       'TRACK',
-      `[${Amplitude.providerName}]`,
+      `[${this.providerName}]`,
       mappedName,
       mappedParams
     );
@@ -49,12 +50,7 @@ export class Amplitude extends Provider {
   }
 
   identify(userId: string, params: Record<string, unknown> = {}): void {
-    Provider.logAction(
-      'IDENTIFY',
-      `[${Amplitude.providerName}]`,
-      userId,
-      params
-    );
+    Provider.logAction('IDENTIFY', `[${this.providerName}]`, userId, params);
     window.amplitude.setUserId(userId);
     const identifyEvent = new window.amplitude.Identify();
     Object.keys(params).forEach((k) => identifyEvent.set(k, params[k]));

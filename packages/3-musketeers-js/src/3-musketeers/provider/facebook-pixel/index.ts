@@ -17,6 +17,7 @@ type AdvancedMatching = {
 
 export class FacebookPixel extends Provider {
   static providerName: string = 'facebook-pixel';
+  providerName: string = 'facebook-pixel';
   mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
 
   init(
@@ -24,16 +25,19 @@ export class FacebookPixel extends Provider {
     options: ProviderInitOptions = {},
     advancedMatching?: AdvancedMatching
   ): void {
-    Provider.logAction('INIT', `[${FacebookPixel.providerName}]`, pixelId);
+    Provider.logAction('INIT', `[${this.providerName}]`, pixelId);
     this.saveOptions(options);
 
+    /* eslint-disable prefer-spread */
+    /* eslint-disable prefer-rest-params */
     if (this.ready()) return;
-
     window.fbq = function () {
       window.fbq.callMethod
         ? window.fbq.callMethod.apply(window.fbq, arguments)
         : window.fbq.queue.push(arguments);
-    };
+    } as never;
+    /* eslint-enable prefer-spread */
+    /* eslint-enable prefer-rest-params */
     if (!window._fbq) window._fbq = window.fbq;
 
     window.fbq.push = window.fbq;
@@ -50,7 +54,7 @@ export class FacebookPixel extends Provider {
     return !!window.fbq;
   }
   pageView(name: string, params?: Record<string, string> | undefined): void {
-    Provider.logAction('PAGE', `[${FacebookPixel.providerName}]`, name, params);
+    Provider.logAction('PAGE', `[${this.providerName}]`, name, params);
 
     window.fbq('track', 'PageView', params);
   }
@@ -65,7 +69,7 @@ export class FacebookPixel extends Provider {
     );
     Provider.logAction(
       'TRACK',
-      `[${FacebookPixel.providerName}]`,
+      `[${this.providerName}]`,
       mappedName,
       mappedParams
     );
@@ -74,12 +78,7 @@ export class FacebookPixel extends Provider {
     if (typeof callback === 'function') callback();
   }
   identify(userId: string, params?: Record<string, unknown>): void {
-    Provider.logAction(
-      'IDENTIFY',
-      `[${FacebookPixel.providerName}]`,
-      userId,
-      params
-    );
+    Provider.logAction('IDENTIFY', `[${this.providerName}]`, userId, params);
 
     window.fbq('setUserId', userId);
     window.fbq('track', 'CompleteRegistration', params);

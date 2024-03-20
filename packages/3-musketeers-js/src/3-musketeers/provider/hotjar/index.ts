@@ -4,6 +4,7 @@ import {Provider, ProviderInitOptions} from '../provider';
 
 export class Hotjar extends Provider {
   static providerName: string = 'hotjar';
+  providerName: string = 'hotjar';
   mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
 
   init(
@@ -11,7 +12,7 @@ export class Hotjar extends Provider {
     hotjarVersion: number,
     options: ProviderInitOptions = {}
   ): void {
-    Provider.logAction('INIT', `[${Hotjar.providerName}]`, siteId);
+    Provider.logAction('INIT', `[${this.providerName}]`, siteId);
     this.saveOptions(options);
 
     HotjarSdk.init(siteId, hotjarVersion);
@@ -20,7 +21,7 @@ export class Hotjar extends Provider {
     return !!HotjarSdk;
   }
   pageView(name: string, params?: Record<string, string>): void {
-    Provider.logAction('PAGE', `[${Hotjar.providerName}]`, name, params);
+    Provider.logAction('PAGE', `[${this.providerName}]`, name, params);
 
     HotjarSdk.stateChange(name);
   }
@@ -35,7 +36,7 @@ export class Hotjar extends Provider {
     );
     Provider.logAction(
       'TRACK',
-      `[${Hotjar.providerName}]`,
+      `[${this.providerName}]`,
       mappedName,
       mappedParams
     );
@@ -47,7 +48,7 @@ export class Hotjar extends Provider {
     userId: string,
     params?: Record<string, string | number | boolean | Date>
   ): void {
-    Provider.logAction('IDENTIFY', `[${Hotjar.providerName}]`, userId, params);
+    Provider.logAction('IDENTIFY', `[${this.providerName}]`, userId, params);
 
     HotjarSdk.identify(userId, params);
     throw new Error('Method not implemented.');

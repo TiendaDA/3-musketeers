@@ -11,7 +11,7 @@
     window.dataQueue = window.dataQueue || [];
     function t3m() {dataQueue.push(arguments);}
 
-    t3m('init', 'google-analytics', 'G-1234567', {
+    t3m('init', 'google-tag-manager', 'G-1234567', {
       mapTrackEventName: (name) => name.replaceAll(' ', '_').toLowerCase(),
     });
 
@@ -29,6 +29,11 @@
       'lastName': '9000',
       'email': 'space@odyssey.com'
     });
+
+    t3m('track', 'Only Amplitude Event Started', {
+      'action': 'Started',
+      'event_label': 'Only Amplitude Event'
+    }, ['amplitude']);
   </script>
 </head>
 <body>

@@ -83,12 +83,12 @@ t3m('track', 'On-Boarding Started', {
 
 ## 📖 Command documentation
 
-| Command  | Arguments                                                                  | Description                                                                                     |
-| -------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| init     | `(...args: any[])`                                                         | Initialize provider. It has dynamic arguments and it's defined in each provider implementation. |
-| page     | `(name: string, params?: Record<string, string>)`                          | Record each time user sees a website page.                                                      |
-| track    | `(eventName: string, params?: Record<string, any>, callback?: () => void)` | Record an action performed by a user.                                                           |
-| identify | `(userId: string, params?: Record<string, any>)`                           | Attach current session and actions made to some identifiable user.                              |
+| Command  | Arguments                                                                                            | Description                                                                                     |
+| -------- |------------------------------------------------------------------------------------------------------| ----------------------------------------------------------------------------------------------- |
+| init     | `(...args: any[])`                                                                                   | Initialize provider. It has dynamic arguments and it's defined in each provider implementation. |
+| page     | `(name: string, params?: Record<string, string>, onlyProviders?: string[])`                          | Record each time user sees a website page.                                                      |
+| track    | `(eventName: string, params?: Record<string, any>, onlyProviders?: string[], callback?: () => void)` | Record an action performed by a user.                                                           |
+| identify | `(userId: string, params?: Record<string, any>, onlyProviders?: string[])`                           | Attach current session and actions made to some identifiable user.                              |
 
 ## 🎯 Included Providers
 

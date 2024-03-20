@@ -8,7 +8,7 @@ plugins {
 
 
 group = 'com.tiendada'
-version = '0.0.4-SNAPSHOT'
+version = '0.0.5-SNAPSHOT'
 sourceCompatibility = '17'
 
 checkstyle {
