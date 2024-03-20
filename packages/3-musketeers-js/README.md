@@ -45,7 +45,7 @@ t3m('track', 'On-Boarding Started', {
 
 ## 👀 Examples
 
-#### Google Analytics 4 + custom track event name transformation ("On-Boarding Started" ➜ "on_boarding_started")
+#### Google Analytics 4 + custom track event name transformation ("On-Boarding Started" ➜ "on_boarding_started") + single event only track for amplitude
 
 ```html
 <!-- 3-musketeers (3m.js) -->
@@ -78,6 +78,11 @@ t3m('track', 'On-Boarding Started', {
     category: 'On-Boarding',
     action: 'Started',
   });
+
+  t3m('track', 'Only Amplitude Event Started', {
+      'action': 'Started',
+      'event_label': 'Only Amplitude Event'
+  }, ['amplitude']);
 </script>
 ```
 
