@@ -38,9 +38,11 @@ public class GoogleAnalytics4 extends Provider {
 
   @Override
   public void track(TrackRequest request) {
+    var eventName = this.formatEventName(request.getEventName());
+
     var identifier = this.getProviderIdentifier(request.getIdentifier());
     if (!this.isValidIdentifier(identifier)) {
-      log.debug("Track: Identifier not found [eventName=%s]".formatted(request.getEventName()));
+      log.warn("Track: Identifier not found [eventName=%s]".formatted(eventName));
       return;
     }
 
@@ -73,7 +75,7 @@ public class GoogleAnalytics4 extends Provider {
       }
     }
 
-    var event = Map.of("name", request.getEventName(), "params", eventAttributes);
+    var event = Map.of("name", eventName, "params", eventAttributes);
     var body =
         Map.of(
             "client_id",
@@ -93,7 +95,7 @@ public class GoogleAnalytics4 extends Provider {
         log.info(
             "Track "
                 + "[statusCode=%d][event=%s][identifier=%s]"
-                    .formatted(response.getStatus(), request.getEventName(), identifier));
+                    .formatted(response.getStatus(), eventName, identifier));
       } else {
         log.warn("Empty ga4 event response [identifier=%s]".formatted(identifier));
       }
@@ -111,5 +113,9 @@ public class GoogleAnalytics4 extends Provider {
     return Objects.nonNull(identifier)
         && Objects.nonNull(identifier.get("client_id"))
         && Objects.nonNull(identifier.get("user_id"));
+  }
+
+  private String formatEventName(String eventName) {
+    return eventName.replace('-', '_').replace(' ', '_').toLowerCase();
   }
 }
