@@ -1,4 +1,4 @@
-import {deepClone} from '../../utils/deep-clone';
+import deepClone from '../../utils/deep-clone';
 import {Provider} from '../provider';
 
 /*export function handleInit(
