@@ -1,5 +1,5 @@
+import {deepClone} from '../../utils/deep-clone';
 import {Provider} from '../provider';
-import copy from 'fast-copy';
 
 /*export function handleInit(
   providers: Provider[],
@@ -20,7 +20,7 @@ import copy from 'fast-copy';
 export function handlePageView(providers: Provider[], args: unknown[]) {
   providers.forEach((p) => {
     const [name, params] = args as [string, Record<string, string>];
-    const paramsCopy = copy(params);
+    const paramsCopy = deepClone(params);
     p.pageView(name, paramsCopy);
   });
 }
@@ -32,7 +32,7 @@ export function handleTrack(providers: Provider[], args: unknown[]) {
       Record<string, unknown>,
       () => void,
     ];
-    const paramsCopy = copy(params);
+    const paramsCopy = deepClone(params);
     p.track(eventName, paramsCopy, callback);
   });
 }
@@ -44,7 +44,7 @@ export function handleIdentify(providers: Provider[], args: unknown[]) {
       Record<string, unknown>,
       () => void,
     ];
-    const paramsCopy = copy(params);
+    const paramsCopy = deepClone(params);
     p.identify(userId, paramsCopy);
   });
 }
