@@ -1,4 +1,5 @@
 import {Provider} from '../provider';
+import copy from 'fast-copy';
 
 /*export function handleInit(
   providers: Provider[],
@@ -19,7 +20,8 @@ import {Provider} from '../provider';
 export function handlePageView(providers: Provider[], args: unknown[]) {
   providers.forEach((p) => {
     const [name, params] = args as [string, Record<string, string>];
-    p.pageView(name, params);
+    const paramsCopy = copy(params);
+    p.pageView(name, paramsCopy);
   });
 }
 
@@ -30,7 +32,8 @@ export function handleTrack(providers: Provider[], args: unknown[]) {
       Record<string, unknown>,
       () => void,
     ];
-    p.track(eventName, params, callback);
+    const paramsCopy = copy(params);
+    p.track(eventName, paramsCopy, callback);
   });
 }
 
@@ -41,6 +44,7 @@ export function handleIdentify(providers: Provider[], args: unknown[]) {
       Record<string, unknown>,
       () => void,
     ];
-    p.identify(userId, params);
+    const paramsCopy = copy(params);
+    p.identify(userId, paramsCopy);
   });
 }
