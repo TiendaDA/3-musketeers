@@ -2,6 +2,7 @@ package com.tiendada.musketeers.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tiendada.musketeers.error.ErrorUtils;
+import com.tiendada.musketeers.http.body.FormBody;
 import com.tiendada.musketeers.http.body.JsonBody;
 import com.tiendada.musketeers.http.body.StringBody;
 import com.tiendada.musketeers.http.exc.HttpConfigException;
@@ -52,6 +53,8 @@ public class Http {
         requestBase.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
       } else if (options.getBody() instanceof StringBody) {
         requestBase.setHeader(HttpHeaders.CONTENT_TYPE, "text/plain");
+      } else if (options.getBody() instanceof FormBody) {
+        requestBase.setHeader(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
       }
 
       // body

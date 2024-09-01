@@ -6,10 +6,11 @@ const customerIoScript =
 
 export class CustomerIo extends Provider {
   static providerName: string = 'customer-io';
+  providerName: string = 'customer-io';
   mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
 
   init(customerIoKey: string, options: ProviderInitOptions = {}): void {
-    Provider.logAction('INIT', `[${CustomerIo.providerName}]`, customerIoKey);
+    Provider.logAction('INIT', `[${this.providerName}]`, customerIoKey);
     this.saveOptions(options);
     loadScriptRaw(customerIoScript, {
       async: true,
@@ -21,7 +22,7 @@ export class CustomerIo extends Provider {
     return !!window.analytics;
   }
   pageView(name: string, params?: Record<string, string> | undefined): void {
-    Provider.logAction('PAGE', `[${CustomerIo.providerName}]`, name, params);
+    Provider.logAction('PAGE', `[${this.providerName}]`, name, params);
     window.analytics.page({name, ...params});
   }
   track(
@@ -35,7 +36,7 @@ export class CustomerIo extends Provider {
     );
     Provider.logAction(
       'TRACK',
-      `[${CustomerIo.providerName}]`,
+      `[${this.providerName}]`,
       mappedName,
       mappedParams
     );
@@ -43,12 +44,7 @@ export class CustomerIo extends Provider {
     if (typeof callback === 'function') callback();
   }
   identify(userId: string, params?: Record<string, unknown> | undefined): void {
-    Provider.logAction(
-      'IDENTIFY',
-      `[${CustomerIo.providerName}]`,
-      userId,
-      params
-    );
+    Provider.logAction('IDENTIFY', `[${this.providerName}]`, userId, params);
 
     window.analytics.identify(userId, params);
   }

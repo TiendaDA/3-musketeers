@@ -3,10 +3,11 @@ import {loadScript} from '../../../utils';
 
 export class GoogleTagManager extends Provider {
   static providerName: string = 'google-tag-manager';
+  providerName: string = 'google-tag-manager';
   mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
 
   init(tagId: string, options: ProviderInitOptions = {}): void {
-    Provider.logAction('INIT', `[${GoogleTagManager.providerName}]`, tagId);
+    Provider.logAction('INIT', `[${this.providerName}]`, tagId);
     this.saveOptions(options);
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () {
@@ -23,12 +24,7 @@ export class GoogleTagManager extends Provider {
   }
 
   pageView(name: string, params?: Record<string, string>): void {
-    Provider.logAction(
-      'PAGE',
-      `[${GoogleTagManager.providerName}]`,
-      name,
-      params
-    );
+    Provider.logAction('PAGE', `[${this.providerName}]`, name, params);
     window.gtag('event', 'page_view', {page_title: name, ...params});
   }
 
@@ -43,7 +39,7 @@ export class GoogleTagManager extends Provider {
     );
     Provider.logAction(
       'TRACK',
-      `[${GoogleTagManager.providerName}]`,
+      `[${this.providerName}]`,
       mappedName,
       mappedParams
     );
@@ -52,12 +48,7 @@ export class GoogleTagManager extends Provider {
   }
 
   identify(userId: string, params?: Record<string, unknown>): void {
-    Provider.logAction(
-      'IDENTIFY',
-      `[${GoogleTagManager.providerName}]`,
-      userId,
-      params
-    );
+    Provider.logAction('IDENTIFY', `[${this.providerName}]`, userId, params);
     window.gtag('set', 'user_id', userId);
     window.gtag('set', 'user_properties', params);
   }

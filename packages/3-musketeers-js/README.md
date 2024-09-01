@@ -45,7 +45,7 @@ t3m('track', 'On-Boarding Started', {
 
 ## 👀 Examples
 
-#### Google Analytics 4 + custom track event name transformation ("On-Boarding Started" ➜ "on_boarding_started")
+#### Google Analytics 4 + custom track event name transformation ("On-Boarding Started" ➜ "on_boarding_started") + single event only track for amplitude
 
 ```html
 <!-- 3-musketeers (3m.js) -->
@@ -78,17 +78,22 @@ t3m('track', 'On-Boarding Started', {
     category: 'On-Boarding',
     action: 'Started',
   });
+
+  t3m('track', 'Only Amplitude Event Started', {
+      'action': 'Started',
+      'event_label': 'Only Amplitude Event'
+  }, ['amplitude']);
 </script>
 ```
 
 ## 📖 Command documentation
 
-| Command  | Arguments                                                                  | Description                                                                                     |
-| -------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| init     | `(...args: any[])`                                                         | Initialize provider. It has dynamic arguments and it's defined in each provider implementation. |
-| page     | `(name: string, params?: Record<string, string>)`                          | Record each time user sees a website page.                                                      |
-| track    | `(eventName: string, params?: Record<string, any>, callback?: () => void)` | Record an action performed by a user.                                                           |
-| identify | `(userId: string, params?: Record<string, any>)`                           | Attach current session and actions made to some identifiable user.                              |
+| Command  | Arguments                                                                                            | Description                                                                                     |
+| -------- |------------------------------------------------------------------------------------------------------| ----------------------------------------------------------------------------------------------- |
+| init     | `(...args: any[])`                                                                                   | Initialize provider. It has dynamic arguments and it's defined in each provider implementation. |
+| page     | `(name: string, params?: Record<string, string>, onlyProviders?: string[])`                          | Record each time user sees a website page.                                                      |
+| track    | `(eventName: string, params?: Record<string, any>, onlyProviders?: string[], callback?: () => void)` | Record an action performed by a user.                                                           |
+| identify | `(userId: string, params?: Record<string, any>, onlyProviders?: string[])`                           | Attach current session and actions made to some identifiable user.                              |
 
 ## 🎯 Included Providers
 

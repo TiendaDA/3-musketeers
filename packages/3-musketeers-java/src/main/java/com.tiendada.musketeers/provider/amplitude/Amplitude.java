@@ -2,14 +2,18 @@ package com.tiendada.musketeers.provider.amplitude;
 
 import com.tiendada.musketeers.http.Http;
 import com.tiendada.musketeers.http.HttpOptions;
+import com.tiendada.musketeers.http.body.FormBody;
 import com.tiendada.musketeers.http.body.JsonBody;
 import com.tiendada.musketeers.http.exc.HttpConfigException;
 import com.tiendada.musketeers.provider.Provider;
 import com.tiendada.musketeers.provider.request.IdentifyRequest;
 import com.tiendada.musketeers.provider.request.TrackRequest;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -38,19 +42,17 @@ public class Amplitude extends Provider {
     }
 
     var url = URI.create(this.BASE_URL).resolve("./identify");
-    var event =
+    var identification =
         Map.of(
             "user_id",
             identifier.get("user_id"),
-            "event_type",
-            "$identify",
             "user_properties",
             request.getUserAttributes());
-    var body = Map.of("api_key", this.apiKey, "events", List.of(event));
+    var body = Map.of("api_key", this.apiKey, "identification", List.of(identification));
 
     try {
       var response =
-          Http.post(HttpOptions.builder().url(url.toString()).body(new JsonBody(body)).build());
+          Http.post(HttpOptions.builder().url(url.toString()).body(new FormBody(body)).build());
       log.info(
           "Identify [identifier=%s][statusCode=%s]"
               .formatted(request.getIdentifier(), response.getStatus()));

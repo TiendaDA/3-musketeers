@@ -46,15 +46,15 @@ public class CustomerIODataPipeline extends Provider {
     body.put("context", context);
 
     if (Objects.nonNull(identifier.get("user_id"))) {
-      body.put("user_id", identifier.get("user_id"));
+      body.put("userId", identifier.get("user_id"));
     }
     if (Objects.nonNull(identifier.get("anonymous_id"))) {
-      body.put("anonymous_id", identifier.get("anonymous_id"));
+      body.put("anonymousId", identifier.get("anonymous_id"));
     }
 
     try {
       var response =
-          Http.put(
+          Http.post(
               HttpOptions.builder()
                   .url(url.toString())
                   .headers(this.buildCredentialHeaders())

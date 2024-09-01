@@ -17,6 +17,7 @@ export type ProviderActions = 'INIT' | 'PAGE' | 'TRACK' | 'IDENTIFY';
 
 export abstract class Provider {
   static providerName: string = 'provider';
+  providerName: string = 'provider';
   mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
 
   static logAction(action: ProviderActions, ...message: LogMessage[]) {
@@ -61,3 +62,18 @@ export abstract class Provider {
 export type ProviderClass = typeof Provider;
 
 export type ProviderImpl = {new (): Provider} & typeof Provider;
+
+export function filterProviders(
+  providers: Provider[],
+  onlyProvider?: string[]
+): Provider[] {
+  let filteredProviders = providers;
+
+  if (onlyProvider && Array.isArray(onlyProvider) && onlyProvider.length > 0) {
+    filteredProviders = providers.filter((p) =>
+      onlyProvider.includes(p.providerName)
+    );
+  }
+
+  return filteredProviders;
+}
