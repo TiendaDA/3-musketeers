@@ -81,6 +81,5 @@ export class FacebookPixel extends Provider {
     Provider.logAction('IDENTIFY', `[${this.providerName}]`, userId, params);
 
     window.fbq('setUserId', userId);
-    window.fbq('track', 'CompleteRegistration', params);
   }
 }
