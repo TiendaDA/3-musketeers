@@ -77,10 +77,5 @@ export class FacebookPixel extends Provider {
     window.fbq('track', mappedName, mappedParams);
     if (typeof callback === 'function') callback();
   }
-  identify(userId: string, params?: Record<string, unknown>): void {
-    Provider.logAction('IDENTIFY', `[${this.providerName}]`, userId, params);
-
-    window.fbq('setUserId', userId);
-    window.fbq('track', 'CompleteRegistration', params);
-  }
+  identify(): void {}
 }
