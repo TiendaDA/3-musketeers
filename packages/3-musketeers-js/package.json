@@ -1,6 +1,6 @@
 {
   "name": "@tiendada/3-musketeers",
-  "version": "0.0.5",
+  "version": "0.0.9",
   "description": "Minimal library for handling multiple browser analytics providers.",
   "main": "index.js",
   "scripts": {
