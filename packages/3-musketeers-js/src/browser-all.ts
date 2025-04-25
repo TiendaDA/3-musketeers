@@ -5,6 +5,7 @@ import {CustomerIo} from './3-musketeers/provider/customer-io';
 import {FacebookPixel} from './3-musketeers/provider/facebook-pixel';
 import {Hotjar} from './3-musketeers/provider/hotjar';
 import {UserGuiding} from './3-musketeers/provider/user-guiding';
+import {TiktokPixel} from './3-musketeers/provider/tiktok-pixel';
 
 const t3musketeers = new Tiendada3musketeers([
   GoogleTagManager,
@@ -13,6 +14,7 @@ const t3musketeers = new Tiendada3musketeers([
   FacebookPixel,
   Hotjar,
   UserGuiding,
+  TiktokPixel,
 ]);
 
 window.t3musketeers = t3musketeers;

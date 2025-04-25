@@ -37,4 +37,9 @@ interface Window {
     q: unknown[];
     c: (...args: unknown[]) => void;
   };
+  ttq: {
+    track: (...args: unknown[]) => void;
+    identify: (...args: unknown[]) => void;
+    page: (...args: unknown[]) => void;
+  };
 }
