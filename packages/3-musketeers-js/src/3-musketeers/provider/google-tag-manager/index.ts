@@ -1,31 +1,44 @@
 import {Provider, ProviderInitOptions} from '../provider';
-import {loadScript} from '../../../utils';
 
 export class GoogleTagManager extends Provider {
   static providerName: string = 'google-tag-manager';
   providerName: string = 'google-tag-manager';
   mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
 
-  init(tagId: string, options: ProviderInitOptions = {}): void {
-    Provider.logAction('INIT', `[${this.providerName}]`, tagId);
+  init(gtmId: string, options: ProviderInitOptions = {}): void {
+    Provider.logAction('INIT', `[${this.providerName}]`, gtmId);
     this.saveOptions(options);
+    
     window.dataLayer = window.dataLayer || [];
-    window.gtag = function () {
-      // eslint-disable-next-line prefer-rest-params
-      window.dataLayer.push(arguments);
-    };
-    window.gtag('js', new Date());
-    window.gtag('config', tagId);
-    loadScript(`https://www.googletagmanager.com/gtag/js?id=${tagId}`);
+    
+    (function(w: any, d: Document, s: string, l: string, i: string) {
+      w[l] = w[l] || [];
+      w[l].push({
+        'gtm.start': new Date().getTime(),
+        event: 'gtm.js'
+      });
+      const f = d.getElementsByTagName(s)[0];
+      const j = d.createElement(s) as HTMLScriptElement;
+      const dl = l !== 'dataLayer' ? '&l=' + l : '';
+      j.async = true;
+      j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      if (f.parentNode) {
+        f.parentNode.insertBefore(j, f);
+      }
+    })(window, document, 'script', 'dataLayer', gtmId);
   }
 
   ready(): boolean {
-    return !!window.gtag;
+    return Array.isArray(window.dataLayer);
   }
 
   pageView(name: string, params?: Record<string, string>): void {
     Provider.logAction('PAGE', `[${this.providerName}]`, name, params);
-    window.gtag('event', 'page_view', {page_title: name, ...params});
+    window.dataLayer.push({
+      event: 'page_view',
+      page_title: name,
+      ...params
+    });
   }
 
   track(
@@ -43,13 +56,19 @@ export class GoogleTagManager extends Provider {
       mappedName,
       mappedParams
     );
-    window.gtag('event', mappedName, mappedParams);
+    window.dataLayer.push({
+      event: mappedName,
+      ...mappedParams
+    });
     if (typeof callback === 'function') callback();
   }
 
   identify(userId: string, params?: Record<string, unknown>): void {
     Provider.logAction('IDENTIFY', `[${this.providerName}]`, userId, params);
-    window.gtag('set', 'user_id', userId);
-    window.gtag('set', 'user_properties', params);
+    window.dataLayer.push({
+      event: 'user_identify',
+      user_id: userId,
+      user_properties: params
+    });
   }
 }

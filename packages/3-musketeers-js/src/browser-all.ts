@@ -1,5 +1,6 @@
 import {Tiendada3musketeers} from './3-musketeers';
 import {GoogleTagManager} from './3-musketeers/provider/google-tag-manager';
+import {GoogleTag} from './3-musketeers/provider/google-tag';
 import {Amplitude} from './3-musketeers/provider/amplitude';
 import {CustomerIo} from './3-musketeers/provider/customer-io';
 import {FacebookPixel} from './3-musketeers/provider/facebook-pixel';
@@ -9,6 +10,7 @@ import {TiktokPixel} from './3-musketeers/provider/tiktok-pixel';
 
 const t3musketeers = new Tiendada3musketeers([
   GoogleTagManager,
+  GoogleTag,
   Amplitude,
   CustomerIo,
   FacebookPixel,
