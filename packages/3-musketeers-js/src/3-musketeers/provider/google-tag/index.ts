@@ -9,14 +9,20 @@ export class GoogleTag extends Provider {
   init(tagId: string, options: ProviderInitOptions = {}): void {
     Provider.logAction('INIT', `[${this.providerName}]`, tagId);
     this.saveOptions(options);
-    window.dataLayer = window.dataLayer || [];
-    window.gtag = function () {
-      // eslint-disable-next-line prefer-rest-params
-      window.dataLayer.push(arguments);
-    };
-    window.gtag('js', new Date());
+
+    const isAlreadyInitialized = this.ready();
+
+    if (!isAlreadyInitialized) {
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () {
+        // eslint-disable-next-line prefer-rest-params
+        window.dataLayer.push(arguments);
+      };
+      window.gtag('js', new Date());
+      loadScript(`https://www.googletagmanager.com/gtag/js?id=${tagId}`);
+    }
+
     window.gtag('config', tagId);
-    loadScript(`https://www.googletagmanager.com/gtag/js?id=${tagId}`);
   }
 
   ready(): boolean {
