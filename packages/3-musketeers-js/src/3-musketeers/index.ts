@@ -21,6 +21,14 @@ export class Tiendada3musketeers {
   }
 
   getProviderInstance(providerName: string): Provider | undefined {
+    const existingProvider = this.providers.find(
+      (p: Provider) => p.providerName === providerName
+    );
+
+    if (existingProvider) {
+      return existingProvider;
+    }
+
     const providerCls = this.availableProviders.find(
       (p: typeof Provider) => p.providerName === providerName
     ) as ProviderImpl;
@@ -44,7 +52,14 @@ export class Tiendada3musketeers {
           return;
         }
 
-        this.providers.push(provider);
+        const existsInProviders = this.providers.some(
+          (p: Provider) => p.providerName === providerName
+        );
+
+        if (!existsInProviders) {
+          this.providers.push(provider);
+        }
+
         provider.init(...args);
         break;
       case 'track':

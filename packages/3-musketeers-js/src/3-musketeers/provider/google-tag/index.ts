@@ -5,10 +5,20 @@ export class GoogleTag extends Provider {
   static providerName: string = 'google-tag';
   providerName: string = 'google-tag';
   mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
+  private tagIds: string[] = [];
 
   init(tagId: string, options: ProviderInitOptions = {}): void {
     Provider.logAction('INIT', `[${this.providerName}]`, tagId);
     this.saveOptions(options);
+
+    if (this.tagIds.includes(tagId)) {
+      Provider.logAction(
+        'INIT',
+        `[${this.providerName}]`,
+        `Tag ${tagId} already initialized`
+      );
+      return;
+    }
 
     const isAlreadyInitialized = this.ready();
 
@@ -22,6 +32,7 @@ export class GoogleTag extends Provider {
       loadScript(`https://www.googletagmanager.com/gtag/js?id=${tagId}`);
     }
 
+    this.tagIds.push(tagId);
     window.gtag('config', tagId);
   }
 
