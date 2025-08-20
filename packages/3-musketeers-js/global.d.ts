@@ -41,5 +41,6 @@ interface Window {
     track: (...args: unknown[]) => void;
     identify: (...args: unknown[]) => void;
     page: (...args: unknown[]) => void;
+    load: (...args: unknown[]) => void;
   };
 }

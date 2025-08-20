@@ -12,13 +12,9 @@ export class TiktokPixel extends Provider {
   static providerName: string = 'tiktok-pixel';
   providerName: string = 'tiktok-pixel';
   mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
+  private pixelIds: string[] = [];
 
-  private loadTiktokPixelScript(
-    w: Window,
-    t: string,
-    pixelId: string,
-    advancedMatching: AdvancedMatching = {}
-  ): void {
+  private initializeTiktokPixelScript(w: Window, t: string): void {
     (w as any).TiktokAnalyticsObject = t;
     const ttq = ((w as any)[t] = (w as any)[t] || []);
     ttq.methods = [
@@ -60,6 +56,7 @@ export class TiktokPixel extends Provider {
       ttq._t[e] = +new Date();
       ttq._o = ttq._o || {};
       ttq._o[e] = n || {};
+
       const o = document.createElement('script');
       o.type = 'text/javascript';
       o.async = !0;
@@ -67,14 +64,21 @@ export class TiktokPixel extends Provider {
       const a = document.getElementsByTagName('script')[0];
       a?.parentNode?.insertBefore(o, a);
     };
+  }
+
+  private loadPixelId(
+    pixelId: string,
+    advancedMatching: AdvancedMatching = {}
+  ): void {
     if (!pixelId) {
       log.error('Please insert pixel id for initializing');
-    } else {
-      ttq.load(pixelId);
-      ttq.page();
-      if (advancedMatching) {
-        ttq.identify(advancedMatching);
-      }
+      return;
+    }
+
+    window.ttq.load(pixelId);
+    window.ttq.page();
+    if (advancedMatching) {
+      window.ttq.identify(advancedMatching);
     }
   }
 
@@ -85,14 +89,22 @@ export class TiktokPixel extends Provider {
   ): void {
     Provider.logAction('INIT', `[${this.providerName}]`, tiktokPixelCode);
     this.saveOptions(options);
-    if (this.ready()) return;
 
-    this.loadTiktokPixelScript(
-      window,
-      'ttq',
-      tiktokPixelCode,
-      advancedMatching
-    );
+    if (this.pixelIds.includes(tiktokPixelCode)) {
+      Provider.logAction(
+        'INIT',
+        `[${this.providerName}]`,
+        `Pixel ${tiktokPixelCode} already initialized`
+      );
+      return;
+    }
+
+    if (!this.ready()) {
+      this.initializeTiktokPixelScript(window, 'ttq');
+    }
+
+    this.pixelIds.push(tiktokPixelCode);
+    this.loadPixelId(tiktokPixelCode, advancedMatching);
   }
   ready(): boolean {
     return !!window.ttq;
