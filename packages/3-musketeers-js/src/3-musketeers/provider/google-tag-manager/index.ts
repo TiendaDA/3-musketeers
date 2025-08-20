@@ -8,14 +8,14 @@ export class GoogleTagManager extends Provider {
   init(gtmId: string, options: ProviderInitOptions = {}): void {
     Provider.logAction('INIT', `[${this.providerName}]`, gtmId);
     this.saveOptions(options);
-    
+
     window.dataLayer = window.dataLayer || [];
-    
-    (function(w: any, d: Document, s: string, l: string, i: string) {
+
+    (function (w: unknown, d: Document, s: string, l: string, i: string) {
       w[l] = w[l] || [];
       w[l].push({
         'gtm.start': new Date().getTime(),
-        event: 'gtm.js'
+        event: 'gtm.js',
       });
       const f = d.getElementsByTagName(s)[0];
       const j = d.createElement(s) as HTMLScriptElement;
@@ -37,7 +37,7 @@ export class GoogleTagManager extends Provider {
     window.dataLayer.push({
       event: 'page_view',
       page_title: name,
-      ...params
+      ...params,
     });
   }
 
@@ -58,7 +58,7 @@ export class GoogleTagManager extends Provider {
     );
     window.dataLayer.push({
       event: mappedName,
-      ...mappedParams
+      ...mappedParams,
     });
     if (typeof callback === 'function') callback();
   }
@@ -68,7 +68,7 @@ export class GoogleTagManager extends Provider {
     window.dataLayer.push({
       event: 'user_identify',
       user_id: userId,
-      user_properties: params
+      user_properties: params,
     });
   }
 }

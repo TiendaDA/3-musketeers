@@ -19,6 +19,7 @@ export class FacebookPixel extends Provider {
   static providerName: string = 'facebook-pixel';
   providerName: string = 'facebook-pixel';
   mapTrackEvent: ProviderInitOptions['mapTrackEvent'];
+  private pixelIds: string[] = [];
 
   init(
     pixelId: string,
@@ -28,9 +29,27 @@ export class FacebookPixel extends Provider {
     Provider.logAction('INIT', `[${this.providerName}]`, pixelId);
     this.saveOptions(options);
 
+    if (this.pixelIds.includes(pixelId)) {
+      Provider.logAction(
+        'INIT',
+        `[${this.providerName}]`,
+        `Pixel ${pixelId} already initialized`
+      );
+      return;
+    }
+
+    if (!this.ready()) {
+      this.initializeFacebookPixelScript();
+    }
+
+    this.pixelIds.push(pixelId);
+    window.fbq('init', pixelId, advancedMatching);
+    window.fbq('track', 'PageView');
+  }
+
+  private initializeFacebookPixelScript(): void {
     /* eslint-disable prefer-spread */
     /* eslint-disable prefer-rest-params */
-    if (this.ready()) return;
     window.fbq = function () {
       window.fbq.callMethod
         ? window.fbq.callMethod.apply(window.fbq, arguments)
@@ -46,9 +65,6 @@ export class FacebookPixel extends Provider {
     window.fbq.queue = [];
 
     loadScript(`https://connect.facebook.net/en_US/fbevents.js`);
-
-    window.fbq('init', pixelId, advancedMatching);
-    window.fbq('track', 'PageView');
   }
   ready(): boolean {
     return !!window.fbq;
