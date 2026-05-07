@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@amplitude/unified": "^1.1.1"
+  }
+}
