@@ -1,4 +1,5 @@
-import {initAll, track, identify, Identify} from '@amplitude/unified';
+import * as amplitude from '@amplitude/analytics-browser';
+
 import {Provider, ProviderInitOptions} from '../provider';
 
 export class Amplitude extends Provider {
@@ -13,7 +14,10 @@ export class Amplitude extends Provider {
     userId?: string,
     amplitudeInitOptions: Record<string, unknown> = {}
   ): void {
-    Provider.logAction('INIT', `[${this.providerName}]`, apiKey);
+    Provider.logAction('INIT', `[${this.providerName}]`, apiKey, {
+      userId,
+      amplitudeInitOptions,
+    });
     this.saveOptions(options);
 
     const initOptions: Record<string, unknown> = {
@@ -21,10 +25,11 @@ export class Amplitude extends Provider {
     };
 
     if (userId) {
-      initOptions.userId = userId;
+      amplitude.init(apiKey, userId, initOptions);
+    } else {
+      amplitude.init(apiKey, initOptions);
     }
 
-    initAll(apiKey, initOptions);
     this.initialized = true;
   }
 
@@ -49,14 +54,14 @@ export class Amplitude extends Provider {
       mappedName,
       mappedParams
     );
-    track(mappedName, mappedParams);
+    amplitude.track(mappedName, mappedParams);
     if (typeof callback === 'function') callback();
   }
 
-  identify(userId: string, params: Record<string, unknown> = {}): void {
+  identify(userId: string, params: Record<string, string> = {}): void {
     Provider.logAction('IDENTIFY', `[${this.providerName}]`, userId, params);
-    const identifyEvent = new Identify();
+    amplitude.setDeviceId(userId);
+    const identifyEvent = new amplitude.Identify();
     Object.keys(params).forEach((k) => identifyEvent.set(k, params[k]));
-    identify(identifyEvent, {user_id: userId});
   }
 }
