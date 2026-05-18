@@ -1,4 +1,4 @@
-import * as amplitude from '@amplitude/analytics-browser';
+import {init, track, setDeviceId, Identify} from '@amplitude/analytics-browser';
 
 import {Provider, ProviderInitOptions} from '../provider';
 
@@ -25,9 +25,9 @@ export class Amplitude extends Provider {
     };
 
     if (userId) {
-      amplitude.init(apiKey, userId, initOptions);
+      init(apiKey, userId, initOptions);
     } else {
-      amplitude.init(apiKey, initOptions);
+      init(apiKey, initOptions);
     }
 
     this.initialized = true;
@@ -54,14 +54,14 @@ export class Amplitude extends Provider {
       mappedName,
       mappedParams
     );
-    amplitude.track(mappedName, mappedParams);
+    track(mappedName, mappedParams);
     if (typeof callback === 'function') callback();
   }
 
   identify(userId: string, params: Record<string, string> = {}): void {
     Provider.logAction('IDENTIFY', `[${this.providerName}]`, userId, params);
-    amplitude.setDeviceId(userId);
-    const identifyEvent = new amplitude.Identify();
+    setDeviceId(userId);
+    const identifyEvent = new Identify();
     Object.keys(params).forEach((k) => identifyEvent.set(k, params[k]));
   }
 }
