@@ -23,6 +23,7 @@
   "homepage": "https://github.com/TiendaDA/3-musketeers#readme",
   "dependencies": {
     "@amplitude/analytics-browser": "^2.39.2",
+    "@customerio/cdp-analytics-browser": "^0.5.6",
     "@hotjar/browser": "^1.0.9"
   },
   "devDependencies": {
