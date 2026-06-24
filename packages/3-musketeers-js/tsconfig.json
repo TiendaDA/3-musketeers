@@ -105,7 +105,7 @@
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
-    "include": ["./global.d.ts"],
     "types": ["@types/gtag.js", "@types/facebook-pixel"]
-  }
+  },
+  "include": ["./global.d.ts", "./src/**/*"]
 }
